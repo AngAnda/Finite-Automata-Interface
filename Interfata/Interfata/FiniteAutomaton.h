@@ -31,9 +31,11 @@ public:
 
 	virtual void AddState(QPoint p) override;
 
+	void DeleteState(int value) override;
+
 	void UpdateCoordinate(QPoint p, int index) override;
 
-	virtual std::vector<State*> GetStates() const override;
+	virtual std::vector<State*> GetStatesUi() override;
 
 	virtual void SetState(StateType state, int index) override;
 
@@ -46,12 +48,12 @@ private:
 	std::vector<char> m_alphabet;
 	std::vector<char> m_states; 
 	std::vector<char> m_finalStates; 
-	char m_startState;
+	std::optional<char> m_startState;
 	char m_lambda;
 
 	// pentru afisare
-	std::vector<State*> m_statesUi;
-
+	//std::vector<State*> m_statesUi;
+	std::map<int, State*> m_statesUi;
 };
 
 std::ostream& operator<<(std::ostream& os, std::vector<char> vec);

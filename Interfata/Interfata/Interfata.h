@@ -21,6 +21,7 @@ private slots:
     void HandleStateManager1(bool checked);
     void HandleStateManager2(bool checked);
     void HandleStateManager3(bool checked);
+    void HandleStateManager4(bool checked);
 
 
 private:  

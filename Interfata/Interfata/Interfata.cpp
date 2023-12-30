@@ -3,7 +3,8 @@
 #include <QPainter>
 #include <qpoint.h>
 #include <qprocess.h>
-
+#include <algorithm>
+#include <ranges>
 
 Interfata::Interfata(QWidget* parent)
     : QMainWindow(parent),
@@ -14,6 +15,7 @@ Interfata::Interfata(QWidget* parent)
     QObject::connect(ui.stateManager1, &QRadioButton::toggled, this, &Interfata::HandleStateManager1);
     QObject::connect(ui.stateManager2, &QRadioButton::toggled, this, &Interfata::HandleStateManager2);
     QObject::connect(ui.stateManager3, &QRadioButton::toggled, this, &Interfata::HandleStateManager3);
+    QObject::connect(ui.stateManager4, &QRadioButton::toggled, this, &Interfata::HandleStateManager4);
 
 }
 
@@ -22,11 +24,12 @@ Interfata::~Interfata()
 
 void Interfata::paintEvent(QPaintEvent* event)
 {
-    std::vector<State*> states = m_automaton->GetStates();
+    std::vector<State*> states = m_automaton->GetStatesUi();
     QPainter p(this);
 
     p.setBrush(QBrush(Qt::white));
     for (auto& state : states) {
+
         auto [x, y] = state->GetCoordinate();
         
 
@@ -75,7 +78,8 @@ void Interfata::mouseReleaseEvent(QMouseEvent* event)
                 m_automaton->SetState(StateType::finish, indexExistingNode.value());
             break;
         case ButtonRightAction::DeleteState:
-            // stergere de state
+            if (indexExistingNode.has_value())
+                m_automaton->DeleteState(indexExistingNode.value());
             break;
         }
     }
@@ -103,6 +107,11 @@ void Interfata::HandleStateManager3(bool checked)
     m_currentAction = ButtonRightAction::AddingStartingState;
 }
 
+void Interfata::HandleStateManager4 (bool checked)
+{
+    m_currentAction = ButtonRightAction::DeleteState;
+}
+
 void Interfata::OpenInNotepad(const QString& filePath)
 {
     QProcess::startDetached("notepad.exe", QStringList() << filePath);
@@ -113,10 +122,15 @@ std::optional<int> Interfata::CheckUpdatePosition(QPoint position)
 
     auto& [px, py] = position;
     // returns an index for an index of m_statesUi
-    for (auto& state : m_automaton->GetStates()) {
+    auto states = m_automaton->GetStatesUi();
+
+    for (auto& state : states) {
         auto [sx, sy] = state->GetCoordinate();
-        if (std::abs(sx - px) < m_radius && std::abs(sy - py) < m_radius)
+        if (std::abs(sx - px) < m_radius && std::abs(sy - py) < m_radius) {
             return state->GetIndex();
+        }
+            //return state->GetIndex();
+            
     }
     return std::nullopt;
 }

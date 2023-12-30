@@ -8,11 +8,13 @@ class IAutomaton
 
 public:
 
-	virtual std::vector<State*> GetStates()const = 0 ;
+	virtual std::vector<State*> GetStatesUi() = 0 ;
 
 	virtual void AddState(QPoint) = 0;
 
 	virtual void SetState(StateType state, int index) = 0;
+
+	virtual void DeleteState(int index) = 0;
 
 	virtual void UpdateCoordinate(QPoint, int) = 0;
 
