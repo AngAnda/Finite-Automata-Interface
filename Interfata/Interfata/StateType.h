@@ -2,5 +2,6 @@
 enum StateType {
 	start,
 	finish,
+	start_finish,
 	normal
 };

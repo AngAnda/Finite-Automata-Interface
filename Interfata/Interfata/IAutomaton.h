@@ -12,6 +12,10 @@ public:
 
 	virtual void AddState(QPoint) = 0;
 
+	virtual void SetState(StateType state, int index) = 0;
+
+	virtual void UpdateCoordinate(QPoint, int) = 0;
+
 	virtual void AddTransition(QPoint) = 0;
 
 	virtual bool CheckWord(const std::string& word) = 0;

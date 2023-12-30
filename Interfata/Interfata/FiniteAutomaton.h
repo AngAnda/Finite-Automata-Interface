@@ -22,25 +22,32 @@ public:
 	bool CheckWord(const std::string& word) override;
 
 	bool IsDeterministic() override;
+	
+	friend std::ostream& operator<<(std::ostream& os, FiniteAutomaton& fa);
 
-	virtual void AddState(QPoint p) override;
-
-	virtual std::vector<State*> GetStates() const override;
+	// Functiile specifice pentru interfata
 
 	virtual void AddTransition(QPoint p) override;
 
-	friend std::ostream& operator<<(std::ostream& os, FiniteAutomaton& fa);
+	virtual void AddState(QPoint p) override;
+
+	void UpdateCoordinate(QPoint p, int index) override;
+
+	virtual std::vector<State*> GetStates() const override;
+
+	virtual void SetState(StateType state, int index) override;
+
 
 private:
 
-	bool VerifyAutomaton(); // mai avem nevoie de ea oare?
+	bool VerifyAutomaton(); 
 
 	std::map<std::pair<char, char>, std::vector<char>> m_transitions; 
 	std::vector<char> m_alphabet;
-	std::vector<char> m_states; // schimbam in int
+	std::vector<char> m_states; 
 	std::vector<char> m_finalStates; 
-	char m_startState; 
-	char m_lambda = '*';
+	char m_startState;
+	char m_lambda;
 
 	// pentru afisare
 	std::vector<State*> m_statesUi;

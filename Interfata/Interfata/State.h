@@ -11,7 +11,10 @@ public:
 	State(QPoint p, int value);
 	QPoint GetCoordinate() ;
 	QString GetName() const;
+	int GetIndex() const;
 	StateType GetStateType() const;
+	void SetState(StateType state);
+	void SetCoordinate(QPoint p);
 
 private:
 	QPoint m_coord;
