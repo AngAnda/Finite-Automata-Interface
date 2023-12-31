@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>930</width>
+    <width>933</width>
     <height>518</height>
    </rect>
   </property>
@@ -190,6 +190,19 @@
      </property>
     </widget>
    </widget>
+   <widget class="QCheckBox" name="addLambda">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>20</y>
+      <width>121</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Lambda transition</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QToolBar" name="mainToolBar">
@@ -205,7 +218,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>930</width>
+     <width>933</width>
      <height>22</height>
     </rect>
    </property>

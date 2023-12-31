@@ -11,15 +11,19 @@ public:
 	
 	QString GetValue() const;
 
+	void Update(QString);
+
 	TransitionType GetType() const;
 
 	std::pair<QPoint, QPoint> GetCoord() const;
+
+	bool existingTransition(State* stateFrom, State* stateTo);
 
 	~Transition();
 
 private:
 	State* m_stateFrom, *m_stateTo;
-	QString m_value;
+	std::vector<QString> m_value;
 	TransitionType m_type;
 	bool m_isLambda;
 };

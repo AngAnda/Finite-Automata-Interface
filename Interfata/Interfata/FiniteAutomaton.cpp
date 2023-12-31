@@ -1,7 +1,7 @@
 #include "FiniteAutomaton.h"
 #include <algorithm>
 
-FiniteAutomaton::FiniteAutomaton(): 
+FiniteAutomaton::FiniteAutomaton() :
 	m_startState(char(0)),
 	m_lambda('*'),
 	m_statesUi({}),
@@ -10,11 +10,11 @@ FiniteAutomaton::FiniteAutomaton():
 	// empty
 }
 
-FiniteAutomaton::FiniteAutomaton(const std::vector<char>& Q, const std::vector<char>& sigma, const std::map<std::pair<char, char>, std::vector<char>>& delta, const char& q0, const std::vector<char>& F) : 
-	m_states(Q), 
-	m_alphabet(sigma), 
-	m_transitions(delta), 
-	m_startState(q0), 
+FiniteAutomaton::FiniteAutomaton(const std::vector<char>& Q, const std::vector<char>& sigma, const std::map<std::pair<char, char>, std::vector<char>>& delta, const char& q0, const std::vector<char>& F) :
+	m_states(Q),
+	m_alphabet(sigma),
+	m_transitions(delta),
+	m_startState(q0),
 	m_finalStates(F),
 	m_lambda('*'),// de vazut partea cu lambda
 	m_statesUi({})
@@ -63,7 +63,7 @@ bool FiniteAutomaton::CheckWord(const std::string& word)
 {
 	// se verifica daca automatul este sau nu valid
 
-	std::vector<std::pair<char, int>> crtState = { { m_startState.value(), 0}}; // state and index
+	std::vector<std::pair<char, int>> crtState = { { m_startState.value(), 0} }; // state and index
 	std::vector<std::pair<char, int>> toCheckState;
 
 	while (!crtState.empty()) {
@@ -136,7 +136,7 @@ void FiniteAutomaton::DeleteState(int value)
 	m_statesUi.erase(m_statesUi.find(value)); // se sterge din states
 	// aici este problema
 	m_states.erase(std::find(m_states.begin(), m_states.end(), value));
-	if(std::find(m_finalStates.begin(), m_finalStates.end(), value) != m_finalStates.end())
+	if (std::find(m_finalStates.begin(), m_finalStates.end(), value) != m_finalStates.end())
 		m_finalStates.erase(std::find(m_finalStates.begin(), m_finalStates.end(), value));
 	if (m_startState == char(value) && !m_states.empty())
 		m_startState = m_states.front();
@@ -163,7 +163,7 @@ void FiniteAutomaton::SetState(StateType state, int index)
 	if (state == StateType::finish) {
 		if (std::find(m_finalStates.begin(), m_finalStates.end(), char(index)) == m_finalStates.end()) {
 			m_finalStates.emplace_back(char(index));
-			if(m_statesUi[index]->GetStateType() == StateType::start)
+			if (m_statesUi[index]->GetStateType() == StateType::start)
 				m_statesUi[index]->SetState(StateType::start_finish);
 			else
 				m_statesUi[index]->SetState(state);
@@ -180,11 +180,11 @@ void FiniteAutomaton::SetState(StateType state, int index)
 
 	if (state == StateType::start)
 	{
-		if(m_statesUi[m_startState.value()]->GetStateType() == StateType::start_finish)
+		if (m_statesUi[m_startState.value()]->GetStateType() == StateType::start_finish)
 			m_statesUi[m_startState.value()]->SetState(StateType::finish);
 		else
 			m_statesUi[m_startState.value()]->SetState(StateType::normal);
-		
+
 		m_startState = char(index);
 
 		if (m_statesUi[m_startState.value()]->GetStateType() == StateType::finish)
@@ -201,7 +201,15 @@ std::vector<Transition*> FiniteAutomaton::GetTransitionsUi()
 
 void FiniteAutomaton::AddTransition(State* stateFrom, State* stateTo, QString value, TransitionType transition)
 {
-	m_transitionsUi.emplace_back(new Transition({stateFrom, stateTo, value, transition}));
+	// trebuie verificat daca exista deja caracterul pec are vreau sa il introduc in automat
+
+	for (auto& transition : m_transitionsUi) {
+		if (transition->existingTransition(stateFrom, stateTo)) {
+			transition->Update(value);
+			return;
+		}
+	}
+	m_transitionsUi.emplace_back(new Transition({ stateFrom, stateTo, value, transition }));
 }
 
 
