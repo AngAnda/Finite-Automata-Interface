@@ -211,7 +211,7 @@ std::vector<Transition*> FiniteAutomaton::GetTransitionsUi()
 
 void FiniteAutomaton::AddTransition(State* stateFrom, State* stateTo, QString value, TransitionType transition)
 {
-	// trebuie verificat daca exista deja caracterul pec are vreau sa il introduc in automat
+	// adaugare tranzitie 
 
 	for (auto& transition : m_transitionsUi) {
 		if (transition->existingTransition(stateFrom, stateTo)) {

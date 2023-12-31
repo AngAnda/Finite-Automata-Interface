@@ -22,7 +22,8 @@ private slots:
 	void HandleStateManager2(bool checked);
 	void HandleStateManager3(bool checked);
 	void HandleStateManager4(bool checked);
-
+	void CheckOneWord();
+	void CheckWordsFromFile();
 
 private:
 	void OpenInNotepad(const QString& filePath);

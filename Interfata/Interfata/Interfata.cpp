@@ -7,6 +7,8 @@
 #include <qdir.h>
 #include <qpainterpath.h>
 #include <QVector2D>
+#include <qfiledialog.h>
+#include <qmessagebox.h>
 
 
 Interfata::Interfata(QWidget* parent)
@@ -19,7 +21,8 @@ Interfata::Interfata(QWidget* parent)
 	QObject::connect(ui.stateManager1, &QRadioButton::toggled, this, &Interfata::HandleStateManager1);
 	QObject::connect(ui.stateManager2, &QRadioButton::toggled, this, &Interfata::HandleStateManager2);
 	QObject::connect(ui.stateManager3, &QRadioButton::toggled, this, &Interfata::HandleStateManager3);
-	QObject::connect(ui.stateManager4, &QRadioButton::toggled, this, &Interfata::HandleStateManager4);
+	QObject::connect(ui.readWordButton, &QRadioButton::clicked, this, &Interfata::CheckOneWord);
+	QObject::connect(ui.wordsFromFile, &QRadioButton::clicked, this, &Interfata::CheckWordsFromFile);
 }
 
 Interfata::~Interfata()
@@ -74,6 +77,7 @@ void Interfata::mouseReleaseEvent(QMouseEvent* event)
 			QString value = (ui.addLambda->isChecked()) ? QString::fromUtf8("\xce\xbb") : QInputDialog::getText(nullptr, "Add a transition", "Enter your transition:", QLineEdit::Normal,
 				QDir::home().dirName());
 			// de cautat daca putem folosi regex pentru a verifica expresii
+
 			if (m_newTransitions.first.value() != m_newTransitions.second.value())
 				m_automaton->AddTransition(m_newTransitions.first.value(), m_newTransitions.second.value(), value, TransitionType::base);
 			else
@@ -154,7 +158,38 @@ void Interfata::HandleStateManager4(bool checked)
 	m_currentAction = ButtonRightAction::DeleteState;
 }
 
+void Interfata::CheckOneWord()
+{
+	QString value =  QInputDialog::getText(nullptr, "Check word in automaton", "Enter your word:", QLineEdit::Normal, "");
+}
 
+void Interfata::CheckWordsFromFile()
+{
+	QString filter = "Text files (*.txt);;All files (*.*)"; // File filter for dialog
+	QString filePath = QFileDialog::getOpenFileName(this, "Open Text File", QDir::homePath(), filter);
+
+	if (!filePath.isEmpty()) {
+		QFile file(filePath);
+
+		if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+			QMessageBox::warning(this, "Read Error", "Could not open the file for reading.");
+			return;
+		}
+
+		QTextStream in(&file);
+		// Now 'in' can be used to read from the file
+		QString fileContent = in.readAll();
+
+		// Do something with the content...
+		// For example, if you want to set it to a QTextEdit:
+		// ui->textEdit->setPlainText(fileContent);
+
+		file.close();
+	}
+	else {
+		// No file was selected
+	}
+}
 
 void Interfata::OpenInNotepad(const QString& filePath)
 {
