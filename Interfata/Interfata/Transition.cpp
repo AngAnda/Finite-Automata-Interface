@@ -42,6 +42,11 @@ bool Transition::existingTransition(State* stateFrom, State* stateTo)
 	return (this->m_stateTo->GetIndex() == stateTo->GetIndex() && this->m_stateFrom->GetIndex() == stateFrom->GetIndex());
 }
 
+bool Transition::HasStateOfValue(int value)
+{
+	return (m_stateFrom->GetIndex() == value || m_stateTo->GetIndex() == value);
+}
+
 Transition::~Transition()
 {
 	delete m_stateFrom;

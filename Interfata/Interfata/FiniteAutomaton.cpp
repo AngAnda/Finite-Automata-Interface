@@ -133,6 +133,15 @@ void FiniteAutomaton::AddState(QPoint p)
 void FiniteAutomaton::DeleteState(int value)
 {
 	// ce se intampla cu simbolul de start
+
+
+	m_transitionsUi.erase(std::remove_if(m_transitionsUi.begin(), m_transitionsUi.end(),
+		[value](Transition* transition) {
+			return (transition->HasStateOfValue(value));	
+		}),
+		m_transitionsUi.end()
+		);
+
 	m_statesUi.erase(m_statesUi.find(value)); // se sterge din states
 	// aici este problema
 	m_states.erase(std::find(m_states.begin(), m_states.end(), value));
@@ -140,6 +149,7 @@ void FiniteAutomaton::DeleteState(int value)
 		m_finalStates.erase(std::find(m_finalStates.begin(), m_finalStates.end(), value));
 	if (m_startState == char(value) && !m_states.empty())
 		m_startState = m_states.front();
+
 	// ce se intampla cu m_startState? 
 }
 

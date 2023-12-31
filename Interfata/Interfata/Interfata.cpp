@@ -6,6 +6,7 @@
 #include <QInputDialog>
 #include <qdir.h>
 #include <qpainterpath.h>
+#include <QVector2D>
 
 
 Interfata::Interfata(QWidget* parent)
@@ -200,7 +201,30 @@ void Interfata::DrawArrow(QPainter& painter, const Transition* transition) {
 				sin(angle - M_PI / 6) * arrowSize + sin(angle) * m_radius / 2);
 		painter.drawPolygon(arrowHead);
 
-		QRect textRect((startBorder + endBorder) / 2 - QPoint(50, 25), QSize(100, 50));
+		// Calculate the midpoint of the line
+		QPointF midPoint = (startBorder + endBorder) / 2.0;
+
+		// Calculate a perpendicular offset
+		double textOffset = 10; // This is the padding amount
+		QPointF perpOffset(-sin(angle) * textOffset, cos(angle) * textOffset);
+
+		// Offset the midpoint by the perpendicular offset
+		midPoint += perpOffset;
+
+		// Draw the text with a background
+		QFont font = painter.font();
+		QFontMetrics metrics(font);
+		QRect textRect = metrics.boundingRect(label);
+		textRect.moveCenter(midPoint.toPoint());
+
+		// Optionally, draw a background rectangle behind the text
+		QRect backgroundRect = textRect.adjusted(-5, -2, 5, 2); // Add some padding around the text
+		painter.setBrush(QColor(255, 255, 255, 127)); // Semi-transparent white background
+		painter.setPen(Qt::NoPen); // No border for the background
+		painter.drawRect(backgroundRect);
+
+		// Set the pen back to black for the text and draw the text
+		painter.setPen(Qt::black);
 		painter.drawText(textRect, Qt::AlignCenter, label);
 
 	}
@@ -214,8 +238,15 @@ void Interfata::DrawArrow(QPainter& painter, const Transition* transition) {
 		painter.setFont(font);
 		QFontMetricsF metrics(font);
 		QRectF textRect = metrics.boundingRect(label);
+		
+		QRectF backgroundRect = textRect.adjusted(-5, -2, 5, 2); // Add some padding around the text
+		painter.setBrush(QColor(255, 255, 255, 127)); // Semi-transparent white background
+		painter.setPen(Qt::NoPen); // No border for the background
+		painter.drawRect(backgroundRect);
 		textRect.moveCenter(QPointF(newPoint.x(), newPoint.y() - 10)); // Adjust the 10 if needed
+		
 		painter.setBrush(QBrush(Qt::black));
+		painter.setPen(Qt::black);
 		painter.drawText(textRect, Qt::AlignCenter, label);
 	}
 

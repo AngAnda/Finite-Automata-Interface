@@ -50,7 +50,7 @@ private:
 	std::vector<char> m_alphabet;
 	std::vector<char> m_states; 
 	std::vector<char> m_finalStates; 
-	std::optional<char> m_startState;
+	std::optional<char> m_startState; // de lucrat cu el putin
 	char m_lambda;
 
 	// pentru afisare

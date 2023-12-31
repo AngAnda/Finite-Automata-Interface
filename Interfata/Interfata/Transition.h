@@ -19,6 +19,8 @@ public:
 
 	bool existingTransition(State* stateFrom, State* stateTo);
 
+	bool HasStateOfValue(int value);
+
 	~Transition();
 
 private:
