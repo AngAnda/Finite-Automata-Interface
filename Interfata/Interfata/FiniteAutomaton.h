@@ -7,6 +7,7 @@
 #include "IAutomaton.h"
 #include "State.h"
 #include "StateType.h"
+#include "Transition.h"
 
 class FiniteAutomaton : public IAutomaton
 {
@@ -27,8 +28,6 @@ public:
 
 	// Functiile specifice pentru interfata
 
-	virtual void AddTransition(QPoint p) override;
-
 	virtual void AddState(QPoint p) override;
 
 	void DeleteState(int value) override;
@@ -39,6 +38,9 @@ public:
 
 	virtual void SetState(StateType state, int index) override;
 
+	virtual std::vector<Transition*> GetTransitionsUi() override;
+
+	virtual void AddTransition(State*, State*, QString, TransitionType transition) override;
 
 private:
 
@@ -52,8 +54,9 @@ private:
 	char m_lambda;
 
 	// pentru afisare
-	//std::vector<State*> m_statesUi;
+	std::vector<Transition*> m_transitionsUi;
 	std::map<int, State*> m_statesUi;
+	
 };
 
 std::ostream& operator<<(std::ostream& os, std::vector<char> vec);

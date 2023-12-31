@@ -124,7 +124,7 @@
       <x>9</x>
       <y>230</y>
       <width>151</width>
-      <height>91</height>
+      <height>131</height>
      </rect>
     </property>
     <property name="title">
@@ -154,6 +154,39 @@
      </property>
      <property name="text">
       <string>Load automaton</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="comboBox">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>100</y>
+       <width>121</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <item>
+      <property name="text">
+       <string>Finite Automaton</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Push Down Automaton</string>
+      </property>
+     </item>
+    </widget>
+    <widget class="QLabel" name="label">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>80</y>
+       <width>201</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Select automaton type</string>
      </property>
     </widget>
    </widget>

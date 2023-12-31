@@ -26,6 +26,7 @@ private slots:
 
 private:  
     void OpenInNotepad(const QString& filePath);
+    void DrawArrow(QPainter& painter, const Transition* transition);
     enum ButtonRightAction{
         AddingState,
         AddingFinalState,
@@ -43,5 +44,5 @@ private:
     const QString m_wordsFile = "./Words.txt";
     ButtonRightAction m_currentAction;
     std::optional<int> m_stateMoving;
-
+    std::pair<std::optional<State*>, std::optional<State*>> m_newTransitions;
 };

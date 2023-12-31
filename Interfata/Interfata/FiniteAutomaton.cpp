@@ -3,7 +3,9 @@
 
 FiniteAutomaton::FiniteAutomaton(): 
 	m_startState(char(0)),
-	m_lambda('*')
+	m_lambda('*'),
+	m_statesUi({}),
+	m_transitionsUi({})
 {
 	// empty
 }
@@ -14,7 +16,8 @@ FiniteAutomaton::FiniteAutomaton(const std::vector<char>& Q, const std::vector<c
 	m_transitions(delta), 
 	m_startState(q0), 
 	m_finalStates(F),
-	m_lambda('*') // de vazut partea cu lambda
+	m_lambda('*'),// de vazut partea cu lambda
+	m_statesUi({})
 {
 	// empty
 }
@@ -191,8 +194,14 @@ void FiniteAutomaton::SetState(StateType state, int index)
 	}
 }
 
-void FiniteAutomaton::AddTransition(QPoint p)
+std::vector<Transition*> FiniteAutomaton::GetTransitionsUi()
 {
+	return m_transitionsUi;
+}
+
+void FiniteAutomaton::AddTransition(State* stateFrom, State* stateTo, QString value, TransitionType transition)
+{
+	m_transitionsUi.emplace_back(new Transition({stateFrom, stateTo, value, transition}));
 }
 
 
