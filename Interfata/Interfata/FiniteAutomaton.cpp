@@ -223,21 +223,21 @@ std::vector<Transition*> FiniteAutomaton::GetTransitionsUi()
 void FiniteAutomaton::AddTransition(State* stateFrom, State* stateTo, QString value, TransitionType transition)
 {
 	// adaugare tranzitie pentru ui 
+	char transitionValue = (value == QString::fromUtf8("\xce\xbb")) ? m_lambda : value.at(0).toLatin1();
 
 	for (auto& transition : m_transitionsUi) {
 		if (transition->existingTransition(stateFrom, stateTo)) {
 			transition->Update(value);
+			m_transitions[{ char((stateFrom->GetIndex())), transitionValue }].emplace_back(char(stateTo->GetIndex()));
 			return;
 		}
 	}
 	m_transitionsUi.emplace_back(new Transition({ stateFrom, stateTo, value, transition }));
 
 	// adaugare tranzitie 
-	char transitionValue = (value == QString::fromUtf8("\xce\xbb")) ? m_lambda : value.at(0).toLatin1();
 
 	auto it = m_transitions.find({ char((stateFrom->GetIndex())), transitionValue });
-	if (it == m_transitions.end() || 
-		std::find(it->second.begin(), it->second.end(), char(stateTo->GetIndex())) == it->second.end())
+	if (it == m_transitions.end())
 		m_transitions[{ char((stateFrom->GetIndex())), transitionValue }].emplace_back(char(stateTo->GetIndex()));
 	
 }
