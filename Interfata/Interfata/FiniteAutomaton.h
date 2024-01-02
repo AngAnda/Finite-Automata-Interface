@@ -42,6 +42,8 @@ public:
 
 	virtual void AddTransition(State*, State*, QString, TransitionType transition) override;
 
+	virtual bool IsValid() const override;
+
 private:
 
 	bool VerifyAutomaton(); 

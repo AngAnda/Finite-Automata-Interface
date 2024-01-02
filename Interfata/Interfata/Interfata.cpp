@@ -21,6 +21,7 @@ Interfata::Interfata(QWidget* parent)
 	QObject::connect(ui.stateManager1, &QRadioButton::toggled, this, &Interfata::HandleStateManager1);
 	QObject::connect(ui.stateManager2, &QRadioButton::toggled, this, &Interfata::HandleStateManager2);
 	QObject::connect(ui.stateManager3, &QRadioButton::toggled, this, &Interfata::HandleStateManager3);
+	QObject::connect(ui.stateManager4, &QRadioButton::toggled, this, &Interfata::HandleStateManager4);
 	QObject::connect(ui.readWordButton, &QRadioButton::clicked, this, &Interfata::CheckOneWord);
 	QObject::connect(ui.wordsFromFile, &QRadioButton::clicked, this, &Interfata::CheckWordsFromFile);
 }
@@ -75,7 +76,7 @@ void Interfata::mouseReleaseEvent(QMouseEvent* event)
 		if (m_newTransitions.first.has_value() && m_newTransitions.second.has_value()) {
 
 			QString value = (ui.addLambda->isChecked()) ? QString::fromUtf8("\xce\xbb") : QInputDialog::getText(nullptr, "Add a transition", "Enter your transition:", QLineEdit::Normal,
-				QDir::home().dirName());
+				QString('a'));
 			// de cautat daca putem folosi regex pentru a verifica expresii
 
 			if (m_newTransitions.first.value() != m_newTransitions.second.value())
@@ -161,6 +162,18 @@ void Interfata::HandleStateManager4(bool checked)
 void Interfata::CheckOneWord()
 {
 	QString value =  QInputDialog::getText(nullptr, "Check word in automaton", "Enter your word:", QLineEdit::Normal, "");
+	QMessageBox messageBox;
+	messageBox.setFixedSize(500, 200);
+
+	if (!m_automaton->IsValid()) {
+		return; 
+	}
+
+	if (m_automaton->CheckWord(std::string(value.toUtf8().constData())))
+		messageBox.critical(0, "Info", "Word has been accepted");
+	else
+		messageBox.critical(0, "Info", "Word hasn't been accepted");
+	messageBox.show();
 }
 
 void Interfata::CheckWordsFromFile()

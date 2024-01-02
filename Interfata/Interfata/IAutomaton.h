@@ -31,5 +31,7 @@ public:
 
 	virtual bool IsDeterministic()=0;
 
+	virtual bool IsValid() const = 0;
+
 };
 

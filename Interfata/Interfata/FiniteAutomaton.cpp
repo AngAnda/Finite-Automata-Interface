@@ -1,5 +1,6 @@
 #include "FiniteAutomaton.h"
 #include <algorithm>
+#include "qmessagebox.h"
 
 FiniteAutomaton::FiniteAutomaton() :
 	m_startState(char(0)),
@@ -63,6 +64,10 @@ bool FiniteAutomaton::CheckWord(const std::string& word)
 {
 	// se verifica daca automatul este sau nu valid
 
+	if (word.size() == 0)
+		return (std::find(m_finalStates.begin(), m_finalStates.end(), m_startState) != m_finalStates.end());
+		
+
 	std::vector<std::pair<char, int>> crtState = { { m_startState.value(), 0} }; // state and index
 	std::vector<std::pair<char, int>> toCheckState;
 
@@ -76,9 +81,9 @@ bool FiniteAutomaton::CheckWord(const std::string& word)
 
 				if (m_transitions.find(key) != m_transitions.end()) { // Check if the key exists in the map
 					for (auto& transitionResult : m_transitions[key]) {
-						if (std::find(toCheckState.begin(), toCheckState.end(), std::make_pair(transitionResult, index + 1)) == toCheckState.end()) {
+						if (std::find(toCheckState.begin(), toCheckState.end(), std::make_pair(transitionResult, index)) == toCheckState.end()) {
 							toCheckState.emplace_back(transitionResult, index + 1);
-							if (std::find(m_finalStates.begin(), m_finalStates.end(), transitionResult) != m_finalStates.end() && word.size() - 1 == index + 1)
+							if (std::find(m_finalStates.begin(), m_finalStates.end(), transitionResult) != m_finalStates.end() && word.size() - 1 == index)
 								return true;
 						}
 					}
@@ -133,7 +138,6 @@ void FiniteAutomaton::AddState(QPoint p)
 void FiniteAutomaton::DeleteState(int value)
 {
 	// ce se intampla cu simbolul de start
-
 
 	m_transitionsUi.erase(std::remove_if(m_transitionsUi.begin(), m_transitionsUi.end(),
 		[value](Transition* transition) {
@@ -211,7 +215,7 @@ std::vector<Transition*> FiniteAutomaton::GetTransitionsUi()
 
 void FiniteAutomaton::AddTransition(State* stateFrom, State* stateTo, QString value, TransitionType transition)
 {
-	// adaugare tranzitie 
+	// adaugare tranzitie pentru ui 
 
 	for (auto& transition : m_transitionsUi) {
 		if (transition->existingTransition(stateFrom, stateTo)) {
@@ -220,6 +224,48 @@ void FiniteAutomaton::AddTransition(State* stateFrom, State* stateTo, QString va
 		}
 	}
 	m_transitionsUi.emplace_back(new Transition({ stateFrom, stateTo, value, transition }));
+
+	// adaugare tranzitie 
+	char transitionValue = (value == QString::fromUtf8("\xce\xbb")) ? m_lambda : value.at(0).toLatin1();
+
+	auto it = m_transitions.find({ char((stateFrom->GetIndex())), transitionValue });
+	if (it == m_transitions.end() || 
+		std::find(it->second.begin(), it->second.end(), char(stateTo->GetIndex())) == it->second.end())
+		m_transitions[{ char((stateFrom->GetIndex())), transitionValue }].emplace_back(char(stateTo->GetIndex()));
+	
+}
+
+bool FiniteAutomaton::IsValid() const
+{
+	QMessageBox messageBox;
+	messageBox.setFixedSize(500, 200);
+	// de cautat probleme in continuare
+	if (m_startState == std::nullopt) 
+	{
+		messageBox.critical(0, "Invalid automaton", "No start state !");
+		messageBox.show();
+		return false;
+	}
+	if (m_finalStates.size() == 0)
+	{
+		messageBox.critical(0, "Invalid automaton", "No final state !");
+		messageBox.show();
+		return false;
+	}
+	if (m_states.size() == 0)
+	{
+		messageBox.critical(0, "Invalid automaton", "No states !");
+		messageBox.show();
+		return false;
+	}
+	if (m_transitions.size() == 0)
+	{
+		messageBox.critical(0, "Invalid automaton", "No transitions!");
+		messageBox.show();
+		return false;
+	}
+
+	return true;
 }
 
 
