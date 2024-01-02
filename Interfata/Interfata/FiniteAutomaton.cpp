@@ -6,7 +6,8 @@ FiniteAutomaton::FiniteAutomaton() :
 	m_startState(char(0)),
 	m_lambda('*'),
 	m_statesUi({}),
-	m_transitionsUi({})
+	m_transitionsUi({}),
+	m_transitionsAnimation({})
 {
 	// empty
 }
@@ -64,12 +65,14 @@ bool FiniteAutomaton::CheckWord(const std::string& word)
 {
 	// se verifica daca automatul este sau nu valid
 
+	m_transitionsAnimation.clear();
 	if (word.size() == 0)
 		return (std::find(m_finalStates.begin(), m_finalStates.end(), m_startState) != m_finalStates.end());
 		
 
 	std::vector<std::pair<char, int>> crtState = { { m_startState.value(), 0} }; // state and index
 	std::vector<std::pair<char, int>> toCheckState;
+	m_transitionsAnimation.emplace_back(crtState);
 
 	while (!crtState.empty()) {
 		toCheckState.clear();
@@ -83,8 +86,10 @@ bool FiniteAutomaton::CheckWord(const std::string& word)
 					for (auto& transitionResult : m_transitions[key]) {
 						if (std::find(toCheckState.begin(), toCheckState.end(), std::make_pair(transitionResult, index)) == toCheckState.end()) {
 							toCheckState.emplace_back(transitionResult, index + 1);
-							if (std::find(m_finalStates.begin(), m_finalStates.end(), transitionResult) != m_finalStates.end() && word.size() - 1 == index)
+							if (std::find(m_finalStates.begin(), m_finalStates.end(), transitionResult) != m_finalStates.end() && word.size() - 1 == index) {
+								m_transitionsAnimation.push_back(toCheckState);
 								return true;
+							}
 						}
 					}
 				}
@@ -94,8 +99,10 @@ bool FiniteAutomaton::CheckWord(const std::string& word)
 					for (auto& transitionResult : m_transitions[key]) {
 						if (std::find(toCheckState.begin(), toCheckState.end(), std::make_pair(transitionResult, index)) == toCheckState.end()) {
 							toCheckState.emplace_back(transitionResult, index);
-							if (std::find(m_finalStates.begin(), m_finalStates.end(), transitionResult) != m_finalStates.end() && word.size() - 1 == index)
+							if (std::find(m_finalStates.begin(), m_finalStates.end(), transitionResult) != m_finalStates.end() && word.size() - 1 == index) {
+								m_transitionsAnimation.push_back(toCheckState);
 								return true;
+							}
 						}
 					}
 				}
@@ -107,7 +114,7 @@ bool FiniteAutomaton::CheckWord(const std::string& word)
 			return false;
 
 		crtState = std::move(toCheckState);
-
+		m_transitionsAnimation.push_back(crtState);
 	}
 
 
@@ -233,6 +240,16 @@ void FiniteAutomaton::AddTransition(State* stateFrom, State* stateTo, QString va
 		std::find(it->second.begin(), it->second.end(), char(stateTo->GetIndex())) == it->second.end())
 		m_transitions[{ char((stateFrom->GetIndex())), transitionValue }].emplace_back(char(stateTo->GetIndex()));
 	
+}
+
+std::vector<std::vector<std::pair<char, int>>> FiniteAutomaton::GetTransitionForWord()
+{
+	return m_transitionsAnimation;
+}
+
+State* FiniteAutomaton::getStateByKey(int index)
+{
+	return m_statesUi[index];
 }
 
 bool FiniteAutomaton::IsValid() const

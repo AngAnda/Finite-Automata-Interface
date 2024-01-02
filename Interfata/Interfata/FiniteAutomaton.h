@@ -26,6 +26,8 @@ public:
 	
 	friend std::ostream& operator<<(std::ostream& os, FiniteAutomaton& fa);
 
+	virtual bool IsValid() const override;
+
 	// Functiile specifice pentru interfata
 
 	virtual void AddState(QPoint p) override;
@@ -42,7 +44,9 @@ public:
 
 	virtual void AddTransition(State*, State*, QString, TransitionType transition) override;
 
-	virtual bool IsValid() const override;
+	std::vector<std::vector<std::pair<char, int>>> GetTransitionForWord() override; // de vazut ce facem la apd
+
+	State* getStateByKey(int index);
 
 private:
 
@@ -58,7 +62,7 @@ private:
 	// pentru afisare
 	std::vector<Transition*> m_transitionsUi;
 	std::map<int, State*> m_statesUi;
-	
+	std::vector<std::vector<std::pair<char, int>>> m_transitionsAnimation; // pentru animatie de tranzitii
 };
 
 std::ostream& operator<<(std::ostream& os, std::vector<char> vec);

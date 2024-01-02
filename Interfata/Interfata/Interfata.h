@@ -28,11 +28,17 @@ private slots:
 private:
 	void OpenInNotepad(const QString& filePath);
 	void DrawArrow(QPainter& painter, const Transition* transition);
+	void DrawPreviousState(QPainter& painter, State* state, QString word);
+	void DrawCurrentState(QPainter& painter, State* state, QString word);
 	enum ButtonRightAction {
 		AddingState,
 		AddingFinalState,
 		AddingStartingState,
 		DeleteState
+	};
+	enum ApplicationState {
+		Animating,
+		Non_Animating
 	};
 
 	std::optional<int> CheckUpdatePosition(QPoint position);
@@ -44,7 +50,13 @@ private:
 	const QString m_automatonFile = "./Automaton.txt";
 	const QString m_wordsFile = "./Words.txt";
 	ButtonRightAction m_currentAction;
+	ApplicationState m_applicationState;
 	std::optional<int> m_stateMoving;
 	std::pair<std::optional<State*>, std::optional<State*>> m_newTransitions;
+	
+	// variabile globale, sunt cam urate
+	int m_AnimationStep;
+	QString m_currentWord;
 
+	std::vector<std::vector<std::pair<char, int>>> m_transitionsHistory;
 };

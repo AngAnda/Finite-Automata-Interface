@@ -9,12 +9,14 @@
 #include <QVector2D>
 #include <qfiledialog.h>
 #include <qmessagebox.h>
-
+#include <QThread>
 
 Interfata::Interfata(QWidget* parent)
 	: QMainWindow(parent),
 	m_currentAction(ButtonRightAction::AddingState),
-	m_newTransitions({ std::nullopt, std::nullopt })
+	m_newTransitions({ std::nullopt, std::nullopt }),
+	m_applicationState(ApplicationState::Non_Animating),
+	m_currentWord("")
 {
 	ui.setupUi(this);
 	m_automaton = new FiniteAutomaton();
@@ -44,7 +46,6 @@ void Interfata::paintEvent(QPaintEvent* event)
 		DrawArrow(p, trans);
 	}
 
-
 	p.setBrush(QBrush(Qt::white));
 
 	for (const auto& state : states) {
@@ -67,6 +68,21 @@ void Interfata::paintEvent(QPaintEvent* event)
 		p.setPen(QPen(Qt::black));
 	}
 
+	if (m_applicationState == ApplicationState::Animating) {
+		for (int i = 0; i < m_AnimationStep; i++) {
+			for (auto& transition : m_transitionsHistory[i]) {
+				auto& [stateKey, wordSpan] = transition;
+				DrawPreviousState(p, m_automaton->getStateByKey(stateKey), m_currentWord.left(wordSpan));
+			}
+		}
+
+		for (auto& transition : m_transitionsHistory[m_AnimationStep]) {
+			auto& [stateKey, wordSpan] = transition;
+			DrawCurrentState(p, m_automaton->getStateByKey(stateKey), m_currentWord.left(wordSpan));
+		}
+
+	}
+
 }
 
 void Interfata::mouseReleaseEvent(QMouseEvent* event)
@@ -77,7 +93,10 @@ void Interfata::mouseReleaseEvent(QMouseEvent* event)
 
 			QString value = (ui.addLambda->isChecked()) ? QString::fromUtf8("\xce\xbb") : QInputDialog::getText(nullptr, "Add a transition", "Enter your transition:", QLineEdit::Normal,
 				QString('a'));
-			// de cautat daca putem folosi regex pentru a verifica expresii
+			if (value.isEmpty()) {
+				m_newTransitions ={ std::nullopt, std::nullopt };
+				return;
+			}
 
 			if (m_newTransitions.first.value() != m_newTransitions.second.value())
 				m_automaton->AddTransition(m_newTransitions.first.value(), m_newTransitions.second.value(), value, TransitionType::base);
@@ -161,19 +180,35 @@ void Interfata::HandleStateManager4(bool checked)
 
 void Interfata::CheckOneWord()
 {
-	QString value =  QInputDialog::getText(nullptr, "Check word in automaton", "Enter your word:", QLineEdit::Normal, "");
+	QString value = QInputDialog::getText(nullptr, "Check word in automaton", "Enter your word:", QLineEdit::Normal, "");
 	QMessageBox messageBox;
 	messageBox.setFixedSize(500, 200);
+	messageBox.setWindowTitle("Info");
 
 	if (!m_automaton->IsValid()) {
-		return; 
+		return;
 	}
 
+	m_currentWord = value;
+	m_applicationState = ApplicationState::Animating;
+
+
 	if (m_automaton->CheckWord(std::string(value.toUtf8().constData())))
-		messageBox.critical(0, "Info", "Word has been accepted");
+		messageBox.setText("Word has been accepted");
 	else
-		messageBox.critical(0, "Info", "Word hasn't been accepted");
-	messageBox.show();
+		messageBox.setText("Word has not been accepted");
+
+	//m_transitionsHistory.clear();
+	m_transitionsHistory = m_automaton->GetTransitionForWord();
+
+	for (uint8_t i = 0; i < m_transitionsHistory.size(); i++) {
+		m_AnimationStep = i;
+		repaint();	
+		QThread::sleep(1);
+	}
+
+	//m_applicationState = ApplicationState::Non_Animating;
+	messageBox.exec();
 }
 
 void Interfata::CheckWordsFromFile()
@@ -286,17 +321,39 @@ void Interfata::DrawArrow(QPainter& painter, const Transition* transition) {
 		painter.setFont(font);
 		QFontMetricsF metrics(font);
 		QRectF textRect = metrics.boundingRect(label);
-		
+
 		QRectF backgroundRect = textRect.adjusted(-5, -2, 5, 2); // Add some padding around the text
 		painter.setBrush(QColor(255, 255, 255, 127)); // Semi-transparent white background
 		painter.setPen(Qt::NoPen); // No border for the background
 		painter.drawRect(backgroundRect);
 		textRect.moveCenter(QPointF(newPoint.x(), newPoint.y() - 10)); // Adjust the 10 if needed
-		
+
 		painter.setBrush(QBrush(Qt::black));
 		painter.setPen(Qt::black);
 		painter.drawText(textRect, Qt::AlignCenter, label);
 	}
 
 
+}
+
+void Interfata::DrawPreviousState(QPainter& painter, State* state, QString word)
+{
+	const auto& [x, y] = state->GetCoordinate();
+	painter.setPen(QPen(Qt::blue));
+	QRect r(x - m_radius / 2, y - m_radius / 2, m_radius, m_radius);
+	QRect textRect(x + m_radius/2+5, y - m_radius/2-5, m_radius, 15 );
+	painter.drawEllipse(r);
+	painter.drawText(r, Qt::AlignCenter, state->GetName());
+	painter.drawText(textRect, Qt::AlignTop, word);
+}
+
+void Interfata::DrawCurrentState(QPainter& painter, State* state, QString word)
+{
+	const auto& [x, y] = state->GetCoordinate();
+	painter.setPen(QPen(Qt::red));
+	QRect r(x - m_radius / 2, y - m_radius / 2, m_radius, m_radius);
+	QRect textRect(x + m_radius / 2 + 5, y - m_radius / 2 - 5, m_radius, 15);
+	painter.drawEllipse(r);
+	painter.drawText(r, Qt::AlignCenter, state->GetName());
+	painter.drawText(textRect, Qt::AlignTop, word);
 }
