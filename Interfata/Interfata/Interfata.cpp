@@ -17,7 +17,8 @@ Interfata::Interfata(QWidget* parent)
 	m_applicationState(ApplicationState::Non_Animating),
 	m_automatonType(AutomatonType::Finite),
 	m_newTransitions({ std::nullopt, std::nullopt }),
-	m_currentWord("")
+	m_currentWord(""),
+	m_acceptedWordsWidget(new CheckWords())
 {
 	ui.setupUi(this);
 	m_automaton = new FiniteAutomaton();
@@ -223,6 +224,9 @@ void Interfata::CheckOneWord()
 
 void Interfata::CheckWordsFromFile()
 {
+	if (!m_automaton->IsValid())
+		return;
+
 	QString filter = "Text files (*.txt);;All files (*.*)"; // File filter for dialog
 	QString filePath = QFileDialog::getOpenFileName(this, "Open Text File", QDir::homePath(), filter);
 
@@ -247,6 +251,8 @@ void Interfata::CheckWordsFromFile()
 	else {
 		// No file was selected
 	}
+
+	m_acceptedWordsWidget->show();
 }
 
 void Interfata::OnComboBoxSelectionChanged(int index)

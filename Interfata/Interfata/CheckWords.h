@@ -14,6 +14,9 @@ class CheckWords : public QWidget
 public:
 	CheckWords(QWidget *parent = nullptr);
 	~CheckWords();
+	void AddAcceptedWords(std::string word);
+	void AddRejectedWords(std::string word);
+	void Clear();
 
 private:
 	Ui::CheckWordsClass *ui;

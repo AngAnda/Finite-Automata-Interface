@@ -3,6 +3,7 @@
 #include <QtWidgets/QMainWindow>
 #include "ui_Interfata.h"
 #include "FiniteAutomaton.h"
+#include "CheckWords.h"
 
 class Interfata : public QMainWindow
 {
@@ -59,7 +60,8 @@ private:
 	AutomatonType m_automatonType;
 	std::optional<int> m_stateMoving;
 	std::pair<std::optional<State*>, std::optional<State*>> m_newTransitions;
-	
+	CheckWords* m_acceptedWordsWidget;
+
 	// variabile globale, sunt cam urate
 	int m_AnimationStep;
 	QString m_currentWord;

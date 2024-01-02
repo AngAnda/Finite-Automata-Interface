@@ -284,6 +284,8 @@ bool FiniteAutomaton::IsValid() const
 		return false;
 	}
 
+	// DE FACUT : de verificat daca toate starile sunt conectate prin cel putin o singura tranzitie
+
 	return true;
 }
 
