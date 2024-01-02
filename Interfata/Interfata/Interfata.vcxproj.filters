@@ -52,6 +52,9 @@
     <ClCompile Include="Transition.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CheckWords.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Grammar.h">
@@ -79,5 +82,15 @@
   <ItemGroup>
     <Text Include="Automaton.txt" />
     <Text Include="Words.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="CheckWords.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+  </ItemGroup>
+  <ItemGroup>
+    <QtUic Include="CheckWords.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
   </ItemGroup>
 </Project>

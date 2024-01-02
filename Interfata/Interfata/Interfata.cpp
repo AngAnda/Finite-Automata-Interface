@@ -14,8 +14,9 @@
 Interfata::Interfata(QWidget* parent)
 	: QMainWindow(parent),
 	m_currentAction(ButtonRightAction::AddingState),
-	m_newTransitions({ std::nullopt, std::nullopt }),
 	m_applicationState(ApplicationState::Non_Animating),
+	m_automatonType(AutomatonType::Finite),
+	m_newTransitions({ std::nullopt, std::nullopt }),
 	m_currentWord("")
 {
 	ui.setupUi(this);
@@ -26,6 +27,7 @@ Interfata::Interfata(QWidget* parent)
 	QObject::connect(ui.stateManager4, &QRadioButton::toggled, this, &Interfata::HandleStateManager4);
 	QObject::connect(ui.readWordButton, &QRadioButton::clicked, this, &Interfata::CheckOneWord);
 	QObject::connect(ui.wordsFromFile, &QRadioButton::clicked, this, &Interfata::CheckWordsFromFile);
+	QObject::connect(ui.comboBox, SIGNAL(QComboBox::currentIndexChanged(int)), this, SLOT(Interfata::OnComboBoxSelectionChanged(int)));
 }
 
 Interfata::~Interfata()
@@ -87,6 +89,7 @@ void Interfata::paintEvent(QPaintEvent* event)
 
 void Interfata::mouseReleaseEvent(QMouseEvent* event)
 {
+	m_applicationState = ApplicationState::Non_Animating;
 	if (event->button() == Qt::RightButton)
 	{
 		if (m_newTransitions.first.has_value() && m_newTransitions.second.has_value()) {
@@ -180,33 +183,40 @@ void Interfata::HandleStateManager4(bool checked)
 
 void Interfata::CheckOneWord()
 {
-	QString value = QInputDialog::getText(nullptr, "Check word in automaton", "Enter your word:", QLineEdit::Normal, "");
-	QMessageBox messageBox;
-	messageBox.setFixedSize(500, 200);
-	messageBox.setWindowTitle("Info");
-
 	if (!m_automaton->IsValid()) {
 		return;
 	}
+
+	QString value = QInputDialog::getText(nullptr, "Check word in automaton", "Enter your word:", QLineEdit::Normal, "");
+	
+	QMessageBox messageBox;
+	messageBox.setFixedSize(500, 200);
+	messageBox.setWindowTitle("Info");
 
 	m_currentWord = value;
 	m_applicationState = ApplicationState::Animating;
 
 
-	if (m_automaton->CheckWord(std::string(value.toUtf8().constData())))
+	if (m_automaton->CheckWord((value.isEmpty())? m_automaton->GetLambda():std::string(value.toUtf8().constData())))
 		messageBox.setText("Word has been accepted");
 	else
 		messageBox.setText("Word has not been accepted");
 
-	//m_transitionsHistory.clear();
-	m_transitionsHistory = m_automaton->GetTransitionForWord();
 
-	for (uint8_t i = 0; i < m_transitionsHistory.size(); i++) {
-		m_AnimationStep = i;
-		repaint();	
-		QThread::sleep(1);
+	if (m_automatonType == AutomatonType::Finite) {
+		FiniteAutomaton* automaton = dynamic_cast<FiniteAutomaton*>(m_automaton);
+
+		m_transitionsHistory = automaton->GetTransitionForWord();
+		for (uint8_t i = 0; i < m_transitionsHistory.size(); i++) {
+			m_AnimationStep = i;
+			repaint();
+			QThread::sleep(1);
+		}
+
 	}
-
+	else {
+		// structura de date folosita pentru APD
+	}
 	//m_applicationState = ApplicationState::Non_Animating;
 	messageBox.exec();
 }
@@ -237,6 +247,14 @@ void Interfata::CheckWordsFromFile()
 	else {
 		// No file was selected
 	}
+}
+
+void Interfata::OnComboBoxSelectionChanged(int index)
+{
+	if (index == 0)
+		m_automatonType = AutomatonType::Finite;
+	else
+		m_automatonType = AutomatonType::Push_Down;
 }
 
 void Interfata::OpenInNotepad(const QString& filePath)

@@ -65,6 +65,8 @@ bool FiniteAutomaton::CheckWord(const std::string& word)
 {
 	// se verifica daca automatul este sau nu valid
 
+	// va trebui folosit dynamic cast pe undeva pe aici
+
 	m_transitionsAnimation.clear();
 	if (word.size() == 0)
 		return (std::find(m_finalStates.begin(), m_finalStates.end(), m_startState) != m_finalStates.end());
@@ -283,6 +285,11 @@ bool FiniteAutomaton::IsValid() const
 	}
 
 	return true;
+}
+
+std::string FiniteAutomaton::GetLambda() const
+{
+	return std::string(1, m_lambda);
 }
 
 

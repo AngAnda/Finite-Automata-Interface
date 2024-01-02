@@ -24,6 +24,7 @@ private slots:
 	void HandleStateManager4(bool checked);
 	void CheckOneWord();
 	void CheckWordsFromFile();
+	void OnComboBoxSelectionChanged(int index); // nu functioneaza
 
 private:
 	void OpenInNotepad(const QString& filePath);
@@ -40,6 +41,10 @@ private:
 		Animating,
 		Non_Animating
 	};
+	enum AutomatonType {
+		Finite,
+		Push_Down
+	};
 
 	std::optional<int> CheckUpdatePosition(QPoint position);
 
@@ -51,6 +56,7 @@ private:
 	const QString m_wordsFile = "./Words.txt";
 	ButtonRightAction m_currentAction;
 	ApplicationState m_applicationState;
+	AutomatonType m_automatonType;
 	std::optional<int> m_stateMoving;
 	std::pair<std::optional<State*>, std::optional<State*>> m_newTransitions;
 	

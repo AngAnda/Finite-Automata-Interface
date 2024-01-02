@@ -28,6 +28,8 @@ public:
 
 	virtual bool IsValid() const override;
 
+	std::string GetLambda() const override;
+
 	// Functiile specifice pentru interfata
 
 	virtual void AddState(QPoint p) override;
@@ -44,7 +46,7 @@ public:
 
 	virtual void AddTransition(State*, State*, QString, TransitionType transition) override;
 
-	std::vector<std::vector<std::pair<char, int>>> GetTransitionForWord() override; // de vazut ce facem la apd
+	std::vector<std::vector<std::pair<char, int>>> GetTransitionForWord(); // de vazut ce facem la apd
 
 	State* getStateByKey(int index);
 

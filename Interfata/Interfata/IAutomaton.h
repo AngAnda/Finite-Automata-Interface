@@ -33,8 +33,9 @@ public:
 
 	virtual bool IsValid() const = 0;
 
-	virtual std::vector<std::vector<std::pair<char, int>>> GetTransitionForWord() = 0;
-
 	virtual State* getStateByKey(int index) = 0;
+	
+	virtual std::string GetLambda() const = 0;
+
 };
 
