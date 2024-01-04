@@ -66,12 +66,12 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
@@ -100,7 +100,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CheckWords.cpp" />
+    <ClCompile Include="PDTransition.cpp" />
+    <ClCompile Include="PushDownAutomaton.cpp" />
     <ClCompile Include="State.cpp" />
+    <ClCompile Include="StivaScene.cpp">
+      <DynamicSource Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">input</DynamicSource>
+      <QtMocFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).moc</QtMocFileName>
+      <DynamicSource Condition="'$(Configuration)|$(Platform)'=='Release|x64'">input</DynamicSource>
+      <QtMocFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).moc</QtMocFileName>
+    </ClCompile>
     <ClCompile Include="Transition.cpp" />
     <QtRcc Include="Interfata.qrc" />
     <QtUic Include="CheckWords.ui" />
@@ -116,6 +124,8 @@
     <ClInclude Include="FiniteAutomaton.h" />
     <ClInclude Include="Grammar.h" />
     <ClInclude Include="IAutomaton.h" />
+    <ClInclude Include="PDTransition.h" />
+    <ClInclude Include="PushDownAutomaton.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="StateType.h" />
     <ClInclude Include="Transition.h" />

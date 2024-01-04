@@ -42,13 +42,15 @@ public:
 
 	virtual void SetState(StateType state, int index) override;
 
-	virtual std::vector<Transition*> GetTransitionsUi() override;
+	std::vector<Transition*> GetTransitionsUi();
 
-	virtual void AddTransition(State*, State*, QString, TransitionType transition) override;
+	void AddTransition(State*, State*, QString, TransitionType transition);
 
 	std::vector<std::vector<std::pair<char, int>>> GetTransitionForWord(); // de vazut ce facem la apd
 
 	State* getStateByKey(int index);
+	
+	virtual void reset() override;
 
 private:
 

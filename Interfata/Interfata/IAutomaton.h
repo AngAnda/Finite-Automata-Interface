@@ -17,9 +17,9 @@ public:
 
 	virtual void DeleteState(int index) = 0;
 
-	virtual std::vector<Transition*> GetTransitionsUi() = 0;
+	//virtual std::vector<Transition*> GetTransitionsUi() = 0;
 
-	virtual void AddTransition(State*, State*, QString, TransitionType) = 0;
+	//virtual void AddTransition(State*, State*, QString, TransitionType) = 0;
 
 	virtual void UpdateCoordinate(QPoint, int) = 0;
 
@@ -36,6 +36,8 @@ public:
 	virtual State* getStateByKey(int index) = 0;
 	
 	virtual std::string GetLambda() const = 0;
+
+	virtual void reset() = 0;
 
 };
 

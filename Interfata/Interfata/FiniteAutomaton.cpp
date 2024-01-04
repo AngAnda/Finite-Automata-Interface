@@ -70,7 +70,7 @@ bool FiniteAutomaton::CheckWord(const std::string& word)
 	m_transitionsAnimation.clear();
 	if (word.size() == 0)
 		return (std::find(m_finalStates.begin(), m_finalStates.end(), m_startState) != m_finalStates.end());
-		
+
 
 	std::vector<std::pair<char, int>> crtState = { { m_startState.value(), 0} }; // state and index
 	std::vector<std::pair<char, int>> toCheckState;
@@ -150,10 +150,10 @@ void FiniteAutomaton::DeleteState(int value)
 
 	m_transitionsUi.erase(std::remove_if(m_transitionsUi.begin(), m_transitionsUi.end(),
 		[value](Transition* transition) {
-			return (transition->HasStateOfValue(value));	
+			return (transition->HasStateOfValue(value));
 		}),
 		m_transitionsUi.end()
-		);
+	);
 
 	m_statesUi.erase(m_statesUi.find(value)); // se sterge din states
 	// aici este problema
@@ -241,7 +241,7 @@ void FiniteAutomaton::AddTransition(State* stateFrom, State* stateTo, QString va
 	auto it = m_transitions.find({ char((stateFrom->GetIndex())), transitionValue });
 	if (it == m_transitions.end())
 		m_transitions[{ char((stateFrom->GetIndex())), transitionValue }].emplace_back(char(stateTo->GetIndex()));
-	
+
 }
 
 std::vector<std::vector<std::pair<char, int>>> FiniteAutomaton::GetTransitionForWord()
@@ -254,12 +254,24 @@ State* FiniteAutomaton::getStateByKey(int index)
 	return m_statesUi[index];
 }
 
+void FiniteAutomaton::reset()
+{
+	m_statesUi.clear();
+	m_transitionsUi.clear();
+	m_transitions.clear();
+	m_states.clear();
+	m_finalStates.clear();
+	m_startState = std::nullopt;
+	m_transitionsAnimation.clear();
+	m_alphabet.clear();
+}
+
 bool FiniteAutomaton::IsValid() const
 {
 	QMessageBox messageBox;
 	messageBox.setFixedSize(500, 200);
 	// de cautat probleme in continuare
-	if (m_startState == std::nullopt) 
+	if (m_startState == std::nullopt)
 	{
 		messageBox.critical(0, "Invalid automaton", "No start state !");
 		messageBox.show();
@@ -308,6 +320,7 @@ std::ostream& operator<<(std::ostream& os, FiniteAutomaton& fa)
 
 	return os;
 }
+
 
 std::ostream& operator<<(std::ostream& os, std::vector<char> vec)
 {

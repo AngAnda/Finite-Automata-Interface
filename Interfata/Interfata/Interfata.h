@@ -3,7 +3,9 @@
 #include <QtWidgets/QMainWindow>
 #include "ui_Interfata.h"
 #include "FiniteAutomaton.h"
+#include "PushDownAutomaton.h"
 #include "CheckWords.h"
+#include "StivaScene.cpp"
 
 class Interfata : public QMainWindow
 {
@@ -17,6 +19,7 @@ protected:
 	void paintEvent(QPaintEvent* event) override;
 	void mouseReleaseEvent(QMouseEvent* event) override;
 	void mousePressEvent(QMouseEvent* event) override;
+	void mouseMoveEvent(QMouseEvent* event) override;
 
 private slots:
 	void HandleStateManager1(bool checked);
@@ -28,8 +31,10 @@ private slots:
 	void OnComboBoxSelectionChanged(int index); // nu functioneaza
 
 private:
+	void DrawStack(QPainter& painter);
 	void OpenInNotepad(const QString& filePath);
 	void DrawArrow(QPainter& painter, const Transition* transition);
+	void DrawArrowPDA(QPainter& painter, const PDTransition* transition);
 	void DrawPreviousState(QPainter& painter, State* state, QString word);
 	void DrawCurrentState(QPainter& painter, State* state, QString word);
 	enum ButtonRightAction {
@@ -62,6 +67,11 @@ private:
 	std::pair<std::optional<State*>, std::optional<State*>> m_newTransitions;
 	CheckWords* m_acceptedWordsWidget;
 
+	QPoint m_stackPosition;
+	bool m_stackMoving;
+	size_t stackItemWidth;
+	size_t stackItemHeight;
+	size_t stackSize = 3;
 	// variabile globale, sunt cam urate
 	int m_AnimationStep;
 	QString m_currentWord;
