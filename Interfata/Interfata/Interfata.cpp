@@ -351,13 +351,23 @@ void Interfata::CheckWordsFromFile()
 		}
 
 		QTextStream in(&file);
-		// Now 'in' can be used to read from the file
-		QString fileContent = in.readAll();
+		QString word;
 
-		// Do something with the content...
-		// For example, if you want to set it to a QTextEdit:
-		// ui->textEdit->setPlainText(fileContent);
-		// ui->textEdit->setPlainText(fileContent);
+		m_acceptedWordsWidget->Clear();
+
+		while (!in.atEnd()) {
+			in >> word; // Read a word
+
+			// Assuming you have a function to check if the word is accepted
+			if (m_automaton->CheckWord(word.toStdString())) {
+				m_acceptedWordsWidget->AddAcceptedWords(word); // Add to accepted list
+			}
+			else {
+				m_acceptedWordsWidget->AddRejectedWords(word); // Add to rejected list
+			}
+		}
+
+		m_acceptedWordsWidget->show();
 
 		file.close();
 	}
@@ -367,6 +377,7 @@ void Interfata::CheckWordsFromFile()
 
 	m_acceptedWordsWidget->show();
 }
+
 
 void Interfata::OnComboBoxSelectionChanged(int index)
 {

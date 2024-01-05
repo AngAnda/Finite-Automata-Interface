@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QtWidgets/QMainWindow>
+#include <QListWidget>
 #include "ui_Interfata.h"
 #include "FiniteAutomaton.h"
 #include "PushDownAutomaton.h"
