@@ -1,4 +1,4 @@
-#include "PushDownAutomaton.h"
+﻿#include "PushDownAutomaton.h"
 #include <algorithm>
 #include "qmessagebox.h"
 
@@ -101,9 +101,82 @@ bool PushDownAutomaton::IsValid() const
 	return true;
 }
 
-void PushDownAutomaton::ReadAutomaton(std::istream& is)
+#include "PushDownAutomaton.h"
+#include <fstream>
+#include <sstream>
+
+void PushDownAutomaton::ReadAutomaton(std::istream& is) 
 {
+	std::string line;
+	while (std::getline(is, line)) {
+		std::istringstream iss(line);
+		std::string word;
+		iss >> word;
+
+		if (word == "States:") {
+			char state;
+			while (iss >> word && word != "Alphabet:") {
+				if (word[0] == 'q') {
+					state = word[1] - '0'; // Presupunem că stările sunt de la q0 la q9
+					QPoint defaultPosition(200 + 50 * int(state), 200);
+					AddState(defaultPosition);
+				}
+			}
+		}
+		else if (word == "Alphabet:") {
+			char input;
+			while (iss >> input && input != 'S') {
+				m_alphabet.push_back(input);
+			}
+		}
+		else if (word == "Stack") {
+			iss >> word; // Skip "Alphabet:"
+			char stackSymbol;
+			while (iss >> stackSymbol) {
+				m_PDMemoryAlphabet.insert(stackSymbol);
+			}
+		}
+		else if (word == "Transitions:") {
+			// Sariți peste linia cu "Transitions:"
+			continue;
+		}
+		else if (word == "Transitions:") {
+			std::string transitionLine;
+			while (std::getline(is, transitionLine) && transitionLine != "Start state:") {
+				std::istringstream transitionStream(transitionLine);
+				transitionStream >> word; // Citim [qX , a , Y]
+
+				if (word[0] == '[') {
+					char stateFrom = word[1] - '0';
+					char inputSymbol = word[5];
+					char stackTop = word[9];
+
+					transitionStream >> word; // Citim "->"
+					transitionStream >> word; // Citim [qZ , W]
+					char stateTo = word[1] - '0';
+					std::string stackPush = word.substr(5);
+
+					QString transitionValue = QString(inputSymbol);
+					QString stackHead = QString(stackTop);
+					QString nextStateStackHead = QString::fromStdString(stackPush);
+					AddTransition(m_statesUi[stateFrom], m_statesUi[stateTo], transitionValue, stackTop, stackPush, TransitionType::base);
+				}
+			}
+		}
+		else if (word == "Start") {
+			iss >> word; // Skip "state:"
+			iss >> word;
+			m_startState = word[1]; // Presupunem că starea de start este q0, q1, etc.
+		}
+		else if (word == "Final") {
+			iss >> word; // Skip "states:"
+			while (iss >> word) {
+				SetState(StateType::finish, word[1] - '0'); // Presupunem că stările finale sunt q0, q1, etc.
+			}
+		}
+	}
 }
+
 
 std::string PushDownAutomaton::GetLambda() const
 {
@@ -302,14 +375,17 @@ void PushDownAutomaton::reset()
 void PushDownAutomaton::setAlphabet(TransitionMap transitions)
 {
 	std::set<char> alfabet;
+	std::unordered_set<char> stackAlphabet;
 	std::unordered_map<std::tuple<char, char, char>, std::pair<char, std::string>>;
 	for (const auto& transition : transitions)
 	{
 		auto key = transition.first;
 		alfabet.insert(std::get<1>(key));
+		stackAlphabet.insert(std::get<2>(key));
 	}
 	std::vector<char> alphabet(alfabet.begin(), alfabet.end());
 	m_alphabet = alphabet;
+	m_PDMemoryAlphabet = stackAlphabet;
 }
 
 bool PushDownAutomaton::VerifyAutomaton()

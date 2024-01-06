@@ -5,6 +5,8 @@
 #include <set>
 #include <format>
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include "IAutomaton.h"
 #include "State.h"
 #include "StateType.h"
