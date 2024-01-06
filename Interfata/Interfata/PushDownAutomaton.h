@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <set>
 #include <format>
 #include <iostream>
 #include "IAutomaton.h"
@@ -67,6 +68,8 @@ public:
 	virtual void reset() override;
 
 	//set stack position
+
+	void setAlphabet(TransitionMap transitions);
 
 private:
 

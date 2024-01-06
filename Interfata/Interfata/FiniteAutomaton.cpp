@@ -112,21 +112,6 @@ void FiniteAutomaton::ReadAutomaton(std::istream& is) {
 			iss >> word;
 			iss >> word; // Acesta este starea țintă
 			targetState = word[1] - '0'; // Presupunem că stările sunt de la q0 la q9
-			//m_transitions[{state, input}].push_back(targetState);
-
-
-			//void FiniteAutomaton::AddTransition(State * stateFrom, State * stateTo, QString value, TransitionType transition);
-			
-			//State* fromState = m_statesUi[int(transition.first)];
-			//State* toState = m_statesUi[int(transition.second)];
-			//AddTransitionToUI({ state, targetState });
-
-			// Create a new Transition object - you might need to adjust this based on how you handle transition labels
-			//QString transitionLabel = "Transition Label"; // Replace with actual label logic
-			//Transition* newTransition = new Transition(fromState, toState, transitionLabel, TransitionType::base);
-
-			// Add the new transition to the m_transitionsUi vector
-			//m_transitionsUi.push_back(newTransition);
 
 			State* fromState = m_statesUi[int(state)];
 			State* toState = m_statesUi[int(targetState)];

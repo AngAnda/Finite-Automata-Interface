@@ -128,7 +128,48 @@ void PushDownAutomaton::AddState(QPoint p)
 
 void PushDownAutomaton::PrintAutomaton(std::ostream& out)
 {
+	out << "States: ";
+	for (const auto& state : m_states) {
+		out << 'q' << int(state) << " ";
+	}
+	out << "\n";
 
+	out << "Alphabet: ";
+	setAlphabet(m_transitions);
+	for (const auto& symbol : m_alphabet) {
+		out << symbol << " ";
+	}
+	out << "\n";
+
+	out << "Stack Alphabet: ";
+	for (const auto& symbol : m_PDMemoryAlphabet) {
+		out << symbol << " ";
+	}
+	out << "\n";
+
+	out << "Transitions:\n";
+	for (const auto& transition : m_transitions) {
+		auto key = transition.first;
+		auto value = transition.second;
+		out << "[q" << int(std::get<0>(key)) << " , " << std::get<1>(key) << " , " << std::get<2>(key) << "] -> ";
+		out << "[q" << int(value.first) << " , " << value.second << "]\n";
+	}
+
+	if (m_startState.has_value()) {
+		out << "Start state: q" << int(m_startState.value()) << "\n";
+	}
+
+	out << "Final states: ";
+	for (const auto& finalState : m_finalStates) {
+		out << 'q' << int(finalState) << " ";
+	}
+	out << "\n";
+
+	if (!m_PDMemory.empty()) {
+		out << "Initial Stack Memory: " << m_startPDMemory << "\n";
+	}
+
+	out.flush();
 }
 
 void PushDownAutomaton::DeleteState(int value)
@@ -256,6 +297,19 @@ void PushDownAutomaton::reset()
 	m_transitionsUi.clear();
 	m_statesUi.clear();
 	m_transitionsAnimation.clear();
+}
+
+void PushDownAutomaton::setAlphabet(TransitionMap transitions)
+{
+	std::set<char> alfabet;
+	std::unordered_map<std::tuple<char, char, char>, std::pair<char, std::string>>;
+	for (const auto& transition : transitions)
+	{
+		auto key = transition.first;
+		alfabet.insert(std::get<1>(key));
+	}
+	std::vector<char> alphabet(alfabet.begin(), alfabet.end());
+	m_alphabet = alphabet;
 }
 
 bool PushDownAutomaton::VerifyAutomaton()
