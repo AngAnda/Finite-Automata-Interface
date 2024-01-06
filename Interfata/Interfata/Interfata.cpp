@@ -438,8 +438,10 @@ void Interfata::LoadAutomatonFromFile()
 	}
 
 	m_automaton->ReadAutomaton(file);
-	file.close();
+	
 	update();
+	
+	file.close();
 }
 
 void Interfata::OpenInNotepad(const QString& filePath)

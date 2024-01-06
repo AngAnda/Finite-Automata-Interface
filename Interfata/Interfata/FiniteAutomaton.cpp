@@ -88,7 +88,9 @@ void FiniteAutomaton::ReadAutomaton(std::istream& is) {
 				if (word[0] == 'q') 
 				{
 					state = word[1] - '0'; // Presupunem că stările sunt de la q0 la q9
-					m_states.push_back(state);
+					//m_states.push_back(state);
+					QPoint defaultPosition(100 + 50 * int(state), 100);
+					AddState(defaultPosition);
 				}
 			}
 		}
@@ -110,7 +112,33 @@ void FiniteAutomaton::ReadAutomaton(std::istream& is) {
 			iss >> word;
 			iss >> word; // Acesta este starea țintă
 			targetState = word[1] - '0'; // Presupunem că stările sunt de la q0 la q9
-			m_transitions[{state, input}].push_back(targetState);
+			//m_transitions[{state, input}].push_back(targetState);
+
+
+			//void FiniteAutomaton::AddTransition(State * stateFrom, State * stateTo, QString value, TransitionType transition);
+			
+			//State* fromState = m_statesUi[int(transition.first)];
+			//State* toState = m_statesUi[int(transition.second)];
+			//AddTransitionToUI({ state, targetState });
+
+			// Create a new Transition object - you might need to adjust this based on how you handle transition labels
+			//QString transitionLabel = "Transition Label"; // Replace with actual label logic
+			//Transition* newTransition = new Transition(fromState, toState, transitionLabel, TransitionType::base);
+
+			// Add the new transition to the m_transitionsUi vector
+			//m_transitionsUi.push_back(newTransition);
+
+			State* fromState = m_statesUi[int(state)];
+			State* toState = m_statesUi[int(targetState)];
+			QString transitionLabel = QString(input);
+			TransitionType transitionType;
+
+			if(input == '*')
+				transitionLabel = QString::fromUtf8("\xce\xbb");
+			if (int(state) == int(targetState))
+				TransitionType::self_pointing;
+			else TransitionType::base;
+			AddTransition(fromState, toState, transitionLabel, transitionType);
 		}
 		else if (word == "Start") {
 			iss >> word; // Ignorați "state:"
