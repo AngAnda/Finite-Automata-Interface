@@ -2,6 +2,7 @@
 
 #include <QtWidgets/QMainWindow>
 #include <QListWidget>
+#include <fstream>
 #include "ui_Interfata.h"
 #include "FiniteAutomaton.h"
 #include "PushDownAutomaton.h"
@@ -30,6 +31,8 @@ private slots:
 	void CheckOneWord();
 	void CheckWordsFromFile();
 	void OnComboBoxSelectionChanged(int index); // nu functioneaza
+	void SaveAutomatonToFile();
+	void LoadAutomatonFromFile();
 
 private:
 	void DrawStack(QPainter& painter);

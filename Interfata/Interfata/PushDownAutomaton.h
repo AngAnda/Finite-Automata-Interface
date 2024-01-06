@@ -45,7 +45,7 @@ public:
 
 	bool IsDeterministic() override;
 	virtual bool IsValid() const override;
-	void ReadAutomaton(std::istream is) override;
+	void ReadAutomaton(std::istream& is) override;
 	friend std::ostream& operator<<(std::ostream& os, PushDownAutomaton& fa);
 
 	// Functiile specifice pentru interfata
@@ -61,7 +61,7 @@ public:
 	std::vector<std::vector<std::pair<char, int>>> GetTransitionForWord(); // de vazut ce facem la apd
 	State* getStateByKey(int index);
 
-	virtual void PrintAutomaton(std::ostream os);
+	virtual void PrintAutomaton(std::ostream& out);
 	virtual bool CheckWord(const std::string& word);
 	void UpdateCoordinate(QPoint p, int index) override;
 	virtual void reset() override;

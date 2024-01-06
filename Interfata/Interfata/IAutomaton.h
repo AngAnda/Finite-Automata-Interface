@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <iostream>
+#include <QTextStream>
 #include "State.h"
 #include "Transition.h"
 
@@ -25,9 +26,9 @@ public:
 
 	virtual bool CheckWord(const std::string& word) = 0;
 
-	virtual void PrintAutomaton(std::ostream os) = 0;
+	virtual void PrintAutomaton(std::ostream& out) = 0;
 
-	virtual void ReadAutomaton(std::istream is) = 0;
+	virtual void ReadAutomaton(std::istream& is) = 0;
 
 	virtual bool IsDeterministic()=0;
 

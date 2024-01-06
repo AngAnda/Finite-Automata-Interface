@@ -33,6 +33,8 @@ Interfata::Interfata(QWidget* parent)
 	QObject::connect(ui.readWordButton, &QRadioButton::clicked, this, &Interfata::CheckOneWord);
 	QObject::connect(ui.wordsFromFile, &QRadioButton::clicked, this, &Interfata::CheckWordsFromFile);
 	QObject::connect(ui.comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(OnComboBoxSelectionChanged(int)));
+	QObject::connect(ui.pushButton_3, &QPushButton::clicked, this, &Interfata::SaveAutomatonToFile);
+	QObject::connect(ui.pushButton_4, &QPushButton::clicked, this, &Interfata::LoadAutomatonFromFile);
 }
 
 Interfata::~Interfata()
@@ -395,6 +397,49 @@ void Interfata::OnComboBoxSelectionChanged(int index)
 		delete m_automaton;
 		m_automaton = new PushDownAutomaton();
 	}
+}
+
+void Interfata::SaveAutomatonToFile()
+{
+	QString fileName = QFileDialog::getSaveFileName(this,
+		tr("Save Automaton"), "",
+		tr("Text Files (*.txt);;All Files (*)"));
+
+	if (fileName.isEmpty())
+		return;
+
+	std::ofstream file(fileName.toStdString());
+	if (!file.is_open())
+	{
+		QMessageBox::information(this, tr("Unable to open file"),
+			tr("Could not open the file for writing."));
+		return;
+	}
+
+	m_automaton->PrintAutomaton(file);
+	file.close();
+}
+
+void Interfata::LoadAutomatonFromFile()
+{
+	QString fileName = QFileDialog::getOpenFileName(this,
+				tr("Open Automaton"), "",
+				tr("Text Files (*.txt);;All Files (*)"));
+
+	if (fileName.isEmpty())
+		return;
+
+	std::ifstream file(fileName.toStdString());
+	if (!file.is_open())
+	{
+		QMessageBox::information(this, tr("Unable to open file"),
+						tr("Could not open the file for reading."));
+		return;
+	}
+
+	m_automaton->ReadAutomaton(file);
+	file.close();
+	update();
 }
 
 void Interfata::OpenInNotepad(const QString& filePath)

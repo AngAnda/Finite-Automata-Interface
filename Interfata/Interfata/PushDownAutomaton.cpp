@@ -101,6 +101,10 @@ bool PushDownAutomaton::IsValid() const
 	return true;
 }
 
+void PushDownAutomaton::ReadAutomaton(std::istream& is)
+{
+}
+
 std::string PushDownAutomaton::GetLambda() const
 {
 	return std::string(1, m_lambda);
@@ -122,7 +126,7 @@ void PushDownAutomaton::AddState(QPoint p)
 }
 
 
-void PushDownAutomaton::PrintAutomaton(std::ostream os)
+void PushDownAutomaton::PrintAutomaton(std::ostream& out)
 {
 
 }
@@ -279,9 +283,4 @@ bool PushDownAutomaton::VerifyAutomaton()
 	}
 
 	return true;
-}
-
-void PushDownAutomaton::ReadAutomaton(std::istream is)
-{
-	//to do
 }

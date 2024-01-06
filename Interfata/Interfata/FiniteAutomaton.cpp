@@ -1,4 +1,4 @@
-#include "FiniteAutomaton.h"
+﻿#include "FiniteAutomaton.h"
 #include <algorithm>
 #include "qmessagebox.h"
 
@@ -24,14 +24,109 @@ FiniteAutomaton::FiniteAutomaton(const std::vector<char>& Q, const std::vector<c
 	// empty
 }
 
-void FiniteAutomaton::PrintAutomaton(std::ostream os)
+void FiniteAutomaton::PrintAutomaton(std::ostream& out)
 {
-	// to do
+	out << "States: ";
+	for (int i = 0; i < m_states.size(); i++)
+	{
+		out << 'q' << int(m_states[i]) << " ";
+	}
+	out << "\n";
+
+	out << "Alphabet: ";
+	setAlphabet(m_transitions);
+	for (auto& symbol : m_alphabet) {
+		out << symbol << " ";
+	}
+	out << "\n";
+
+	out << "Transitions:\n";
+	for (const auto& transition : m_transitions)
+	{
+		auto key = transition.first;
+		out << "[q" << int(key.first) << " , " << key.second << "] = ";
+		for (auto& nextState : transition.second)
+		{
+			out << 'q' << int(nextState) << " ";
+		}
+		out<<"\n";
+	}
+
+	if (m_startState.has_value()) {
+		out << "Start state: q" << int(m_startState.value()) << "\n";
+	}
+
+	out << "Final states: ";
+	for (auto& finalState : m_finalStates) {
+		out << 'q' << int(finalState) << " ";
+	}
+	out << "\n";
+
+	out.flush();
 }
 
-void FiniteAutomaton::ReadAutomaton(std::istream is)
-{
-	// to do
+
+void FiniteAutomaton::ReadAutomaton(std::istream& is) {
+	std::string line;
+	char state;
+	char input;
+	char targetState;
+	std::string startState;
+	std::string finalStates;
+
+	// Resetați automatul actual înainte de a citi unul nou
+	reset();
+
+	while (std::getline(is, line)) 
+	{
+		std::istringstream iss(line);
+		std::string word;
+		iss >> word;
+
+		if (word == "States:") {
+			while (iss >> word && word != "Alphabet:") {
+				if (word[0] == 'q') 
+				{
+					state = word[1] - '0'; // Presupunem că stările sunt de la q0 la q9
+					m_states.push_back(state);
+				}
+			}
+		}
+		else if (word == "Alphabet:") {
+			while (iss >> input && input != 'T') {
+				m_alphabet.push_back(input);
+			}
+		}
+		else if (word == "Transitions:") {
+			// Sariți peste linia cu "Transitions:"
+			continue;
+		}
+		else if (word[0] == '[') {
+			// Presupunem formatul [qX , a] = qY
+			state = word[2] - '0'; // Presupunem că stările sunt de la q0 la q9
+			iss >> input; // Ignorați virgula
+			iss >> input; // Acesta este caracterul de intrare
+			iss >> word; // Ignorați simbolul '='
+			iss >> word;
+			iss >> word; // Acesta este starea țintă
+			targetState = word[1] - '0'; // Presupunem că stările sunt de la q0 la q9
+			m_transitions[{state, input}].push_back(targetState);
+		}
+		else if (word == "Start") {
+			iss >> word; // Ignorați "state:"
+			iss >> startState;
+			m_startState = startState[1] - '0'; // Presupunem că stările sunt de la q0 la q9
+		}
+		else if (word == "Final") {
+			iss >> word; // Ignorați "states:"
+			while (iss >> word) {
+				finalStates.push_back(word[1] - '0'); // Presupunem că stările sunt de la q0 la q9
+			}
+			for (char fs : finalStates) {
+				m_finalStates.push_back(fs);
+			}
+		}
+	}
 }
 
 bool FiniteAutomaton::VerifyAutomaton()
@@ -264,6 +359,18 @@ void FiniteAutomaton::reset()
 	m_startState = std::nullopt;
 	m_transitionsAnimation.clear();
 	m_alphabet.clear();
+}
+
+void FiniteAutomaton::setAlphabet(std::map<std::pair<char, char>, std::vector<char>> transitions)
+{
+	std::set<char> alfabet;
+	for (const auto& transition : transitions)
+	{
+		auto key = transition.first;
+		alfabet.insert(key.second);
+	}
+	std::vector<char> alphabet(alfabet.begin(), alfabet.end());
+	m_alphabet = alphabet;
 }
 
 bool FiniteAutomaton::IsValid() const

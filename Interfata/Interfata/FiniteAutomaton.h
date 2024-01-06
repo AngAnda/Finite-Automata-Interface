@@ -2,8 +2,10 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <set>
 #include <format>
 #include <iostream>
+#include <sstream>
 #include "IAutomaton.h"
 #include "State.h"
 #include "StateType.h"
@@ -16,9 +18,9 @@ public:
 	
 	FiniteAutomaton(const std::vector<char>& Q, const std::vector<char>& sigma, const std::map<std::pair<char, char>, std::vector<char>>& delta, const char& q0, const std::vector<char>& F);
 
-	void PrintAutomaton(std::ostream os) override;
+	void PrintAutomaton(std::ostream& out) override;
 
-	void ReadAutomaton(std::istream is) override;
+	void ReadAutomaton(std::istream& is) override;
 
 	bool CheckWord(const std::string& word) override;
 
@@ -51,6 +53,8 @@ public:
 	State* getStateByKey(int index);
 	
 	virtual void reset() override;
+
+	void setAlphabet(std::map<std::pair<char, char>, std::vector<char>> transitions);
 
 private:
 
