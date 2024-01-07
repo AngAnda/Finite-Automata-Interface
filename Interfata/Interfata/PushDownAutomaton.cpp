@@ -16,43 +16,43 @@ PushDownAutomaton::PushDownAutomaton(const std::vector<char>& states, const std:
 
 bool PushDownAutomaton::CheckWord(const std::string& word) {
 	std::cout << "Checking word: " << word << std::endl;
-	char currentState = m_startState.has_value();
-	int index = 0;
-	while (index <= word.size())
-	{
-		char currentLetter;
-		if (index == word.size())
-			currentLetter = '*';
-		else
-			currentLetter = word[index];
-		//char nextLeter = word[index + 1];
-		if (std::find(m_alphabet.begin(), m_alphabet.end(), currentLetter) == m_alphabet.end() and currentLetter != '*')
-		{
-			return false;
-		}
-		std::vector<std::pair<char, std::string>> transitions{ m_transitions[std::make_tuple(currentState, currentLetter, m_PDMemory.top())] };
-		if (transitions.size() == 0)
-			return false;
-
-		for (const auto& transition : transitions)
-		{
-			currentState = transition.first;
-			m_PDMemory.pop();
-			if (transition.second != "*")
-			{
-				for (int i = transition.second.size() - 1; i >= 0; --i)
-				{
-					m_PDMemory.push(transition.second[i]);
-				}
-			}
-		}
-		index++;
-	}
-	if (std::find(m_finalStates.begin(), m_finalStates.end(), currentState) != m_finalStates.end())
-		return true;
-	return false;
+	return CheckWordRecursive(word, 0, m_startState.value(), m_PDMemory);
 }
 
+bool PushDownAutomaton::CheckWordRecursive(std::string word, int index, char currentState, std::stack<char> PDMemory) 
+{
+	// Cazul de bază: Dacă am ajuns la finalul cuvântului, verificăm dacă suntem într-o stare finală.
+	if (index == word.size()) {
+		return (std::find(m_finalStates.begin(), m_finalStates.end(), currentState) != m_finalStates.end() && PDMemory.empty());
+	}
+
+	char currentLetter = word[index];
+	if (std::find(m_alphabet.begin(), m_alphabet.end(), currentLetter) == m_alphabet.end()) {
+		return false; // Litera curentă nu este în alfabet.
+	}
+
+	std::vector<std::pair<char, std::string>> transitions = { m_transitions[std::make_tuple(currentState, currentLetter, PDMemory.empty() ? '*' : PDMemory.top())] };
+
+	for (const auto& transition : transitions) 
+	{
+		std::stack<char> newPDMemory = PDMemory;
+		if (!newPDMemory.empty()) newPDMemory.pop();
+
+		// Adăugăm noile simboluri în stivă, dacă există.
+		if (transition.second != "*") {
+			for (int i = transition.second.size() - 1; i >= 0; --i) {
+				newPDMemory.push(transition.second[i]);
+			}
+		}
+
+		// Apelăm recursiv pentru starea următoare.
+		if (CheckWordRecursive(word, index + 1, transition.first, newPDMemory)) {
+			return true; // Dacă orice traseu duce la acceptare, returnăm true.
+		}
+	}
+
+	return false; // Niciun traseu nu a dus la acceptare.
+}
 
 bool PushDownAutomaton::IsDeterministic()
 {

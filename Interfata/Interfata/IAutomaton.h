@@ -40,5 +40,7 @@ public:
 
 	virtual void reset() = 0;
 
+	std::vector<std::pair<char, int>> GetTransitionForWord() = 0
+
 };
 

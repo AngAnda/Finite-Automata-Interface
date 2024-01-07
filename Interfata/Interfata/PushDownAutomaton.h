@@ -93,6 +93,8 @@ private:
 	std::map<int, State*> m_statesUi;
 
 	std::vector<std::vector<std::pair<char, int>>> m_transitionsAnimation; // pentru animatie de tranzitii
+
+	bool CheckWordRecursive(std::string word, int index, char currentState, std::stack<char> PDMemory);
 };
 
 std::ostream& operator<<(std::ostream& os, std::vector<char> vec);
