@@ -16,36 +16,48 @@ PushDownAutomaton::PushDownAutomaton(const std::vector<char>& states, const std:
 
 bool PushDownAutomaton::CheckWord(const std::string& word) {
 	std::cout << "Checking word: " << word << std::endl;
+	std::cout << "Checking word: " << word << std::endl;
+	m_stackAnimation.clear();
+	m_transitionsAnimation.clear();
+	m_PDMemory.push(m_startPDMemory);
 	return CheckWordRecursive(word, 0, m_startState.value(), m_PDMemory);
 }
 
-bool PushDownAutomaton::CheckWordRecursive(std::string word, int index, char currentState, std::stack<char> PDMemory) 
-{
-	// Cazul de bază: Dacă am ajuns la finalul cuvântului, verificăm dacă suntem într-o stare finală.
+
+bool PushDownAutomaton::CheckWordRecursive(std::string word, int index, char currentState, std::stack<char> PDMemory) {
 	if (index == word.size()) {
 		return (std::find(m_finalStates.begin(), m_finalStates.end(), currentState) != m_finalStates.end() && PDMemory.empty());
 	}
 
 	char currentLetter = word[index];
-	if (std::find(m_alphabet.begin(), m_alphabet.end(), currentLetter) == m_alphabet.end()) {
-		return false; // Litera curentă nu este în alfabet.
-	}
+	//if (std::find(m_alphabet.begin(), m_alphabet.end(), currentLetter) == m_alphabet.end()) {
+	//	return false; 
+	//}
 
-	std::vector<std::pair<char, std::string>> transitions = { m_transitions[std::make_tuple(currentState, currentLetter, PDMemory.empty() ? '*' : PDMemory.top())] };
+	std::vector<std::pair<char, std::string>> transitions;
+	std::tuple<char, char, char> key = std::make_tuple(currentState, currentLetter, PDMemory.empty() ? '\0' : PDMemory.top());
+	if (m_transitions.find(key) != m_transitions.end())
+		transitions.emplace_back(m_transitions[key]);
 
-	for (const auto& transition : transitions) 
-	{
+
+	//std::vector<std::pair<char, std::string>> transitions = { m_transitions[std::make_tuple(currentState, currentLetter, PDMemory.empty() ? '\0' : PDMemory.top())]};
+
+	for (const auto& transition : transitions) {
+
+		
+		m_transitionsAnimation[index].emplace_back(std::make_pair(transition.first, index)); // de verificat daca merge okay
+		//m_stackAnimation[index].emplace_back(transition.first.get(1));
+		//m_stackAnimation[index].emplace_back(transition.first. ); // se ia elementul 3 din stack
+
 		std::stack<char> newPDMemory = PDMemory;
 		if (!newPDMemory.empty()) newPDMemory.pop();
 
-		// Adăugăm noile simboluri în stivă, dacă există.
-		if (transition.second != "*") {
+		if (transition.second != "") {
 			for (int i = transition.second.size() - 1; i >= 0; --i) {
 				newPDMemory.push(transition.second[i]);
 			}
 		}
 
-		// Apelăm recursiv pentru starea următoare.
 		if (CheckWordRecursive(word, index + 1, transition.first, newPDMemory)) {
 			return true; // Dacă orice traseu duce la acceptare, returnăm true.
 		}
@@ -53,6 +65,7 @@ bool PushDownAutomaton::CheckWordRecursive(std::string word, int index, char cur
 
 	return false; // Niciun traseu nu a dus la acceptare.
 }
+
 
 bool PushDownAutomaton::IsDeterministic()
 {
@@ -328,6 +341,40 @@ std::vector<PDTransition*> PushDownAutomaton::GetTransitionsUi()
 	return m_transitionsUi;
 }
 
+std::vector<std::vector<std::pair<char, int>>> PushDownAutomaton::GetTransitionForWord()
+{
+
+	// ar trebui sa mearga
+	std::vector<std::vector<std::pair<char, int>>> transitions;
+	
+	for (const auto& step : m_transitionsAnimation) {
+		transitions.emplace_back(step.second);
+	}
+
+	return transitions;
+}
+
+std::vector<std::vector<std::vector<char>>> PushDownAutomaton::GetStackForWord()
+{
+	std::vector<std::vector<char>> oneStepStacks;
+	std::vector<std::vector<std::vector<char>>> allStacks;
+
+	for (const auto& step : m_stackAnimation) {
+		for (auto stiva : step.second) {
+			std::vector<char> oneStack;
+			while (!stiva.empty()) {
+				oneStack.emplace_back(stiva.top());
+				stiva.pop();
+			}
+			oneStepStacks.emplace_back(oneStack);
+		}
+
+		allStacks.emplace_back(oneStepStacks);
+	}
+
+	return allStacks;
+}
+
 void PushDownAutomaton::AddTransition(State* stateFrom, State* stateTo, QString value, char memoryFrom, std::string memoryTo, TransitionType transition)
 {
 	char transitionValue = (value == QString::fromUtf8("\xce\xbb")) ? m_lambda : value.at(0).toLatin1();
@@ -354,10 +401,6 @@ void PushDownAutomaton::AddTransition(State* stateFrom, State* stateTo, QString 
 
 }
 
-std::vector<std::vector<std::pair<char, int>>> PushDownAutomaton::GetTransitionForWord()
-{
-	return m_transitionsAnimation;
-}
 
 State* PushDownAutomaton::getStateByKey(int index)
 {

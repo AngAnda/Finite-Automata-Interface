@@ -13,6 +13,7 @@
 #include "PDTransition.h"
 #include<stack>
 #include<unordered_set>
+#include<unordered_map>
 
 namespace std {
 	template <>
@@ -62,6 +63,8 @@ public:
 	virtual std::vector<State*> GetStatesUi() override;
 	std::vector<PDTransition*> GetTransitionsUi();
 	std::vector<std::vector<std::pair<char, int>>> GetTransitionForWord(); // de vazut ce facem la apd
+	std::vector<std::vector<std::vector<char>>> GetStackForWord();
+
 	State* getStateByKey(int index);
 
 	virtual void PrintAutomaton(std::ostream& out);
@@ -75,6 +78,10 @@ public:
 
 private:
 
+	bool CheckWordRecursive(std::string word, int index, char currentState, std::stack<char> PDMemory);
+
+private:
+
 	bool VerifyAutomaton();
 
 	std::vector<char> m_states;
@@ -83,7 +90,7 @@ private:
 	std::unordered_set<char> m_PDMemoryAlphabet;
 	std::vector<char> m_finalStates;
 	std::optional<char> m_startState; // de lucrat cu el putin
-	char m_startPDMemory;
+	char m_startPDMemory ='Z';
 	QPoint m_stackPosition;
 	TransitionMap m_transitions;
 	char m_lambda;
@@ -92,9 +99,11 @@ private:
 	std::vector<PDTransition*> m_transitionsUi;
 	std::map<int, State*> m_statesUi;
 
-	std::vector<std::vector<std::pair<char, int>>> m_transitionsAnimation; // pentru animatie de tranzitii
-
-	bool CheckWordRecursive(std::string word, int index, char currentState, std::stack<char> PDMemory);
+	std::unordered_map<int, std::vector<std::pair<char, int>>> m_transitionsAnimation; // pentru animatie de tranzitii
+	std::unordered_map<int, std::vector<std::stack<int>>> m_stackAnimation;
+	// stare 
+	// index cuvant
+	
 };
 
 std::ostream& operator<<(std::ostream& os, std::vector<char> vec);

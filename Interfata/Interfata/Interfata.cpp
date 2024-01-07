@@ -309,19 +309,22 @@ void Interfata::CheckOneWord()
 	messageBox.setWindowTitle("Info");
 
 	m_currentWord = value;
+
+
 	m_applicationState = ApplicationState::Animating;
-
-
-	if (m_automaton->CheckWord((value.isEmpty()) ? m_automaton->GetLambda() : std::string(value.toUtf8().constData())))
+	if (m_automaton->CheckWord((value.isEmpty()) ? m_automaton->GetLambda() : std::string(value.toUtf8().constData()))) {
 		messageBox.setText("Word has been accepted");
+	}
 	else
+	{
 		messageBox.setText("Word has not been accepted");
+	}
 
 
-	if (m_automatonType == AutomatonType::Finite) {
-		FiniteAutomaton* automaton = dynamic_cast<FiniteAutomaton*>(m_automaton);
+	FiniteAutomaton* automatonFinite = dynamic_cast<FiniteAutomaton*>(m_automaton);
+	if (automatonFinite) {
 
-		m_transitionsHistory = automaton->GetTransitionForWord();
+		m_transitionsHistory = automatonFinite->GetTransitionForWord();
 		for (uint8_t i = 0; i < m_transitionsHistory.size(); i++) {
 			m_AnimationStep = i;
 			repaint();
@@ -330,9 +333,9 @@ void Interfata::CheckOneWord()
 
 	}
 	else {
+		m_applicationState = ApplicationState::Non_Animating;
 		// structura de date folosita pentru APD
 	}
-	//m_applicationState = ApplicationState::Non_Animating;
 	messageBox.exec();
 }
 
@@ -545,7 +548,7 @@ void Interfata::DrawArrowPDA(QPainter& painter, const PDTransition* transition)
 {
 	QString stackFromLabel;
 	QString stackToLabel;
-	if (transition->GetStackHead().compare(""))
+	if (transition->GetStackHead().compare("")==0)
 		stackFromLabel = QString("λ");
 	else
 		stackFromLabel = QString(transition->GetStackHead());

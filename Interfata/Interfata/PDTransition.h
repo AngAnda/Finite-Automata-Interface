@@ -6,6 +6,7 @@ class PDTransition :
 public:
 	PDTransition() = default;
 	PDTransition(State* stateFrom, State* stateTo, QString value, TransitionType type, QString stackHead, QString nextStateStackHead);
+
 	~PDTransition() = default;
 
 	QString GetStackHead() const;
