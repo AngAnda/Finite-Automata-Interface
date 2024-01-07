@@ -70,7 +70,6 @@ bool PushDownAutomaton::IsValid() const
 {
 	QMessageBox messageBox;
 	messageBox.setFixedSize(500, 200);
-	// de cautat probleme in continuare
 	if (m_startState == std::nullopt)
 	{
 		messageBox.critical(0, "Invalid automaton", "No start state !");
@@ -101,12 +100,9 @@ bool PushDownAutomaton::IsValid() const
 	return true;
 }
 
-#include "PushDownAutomaton.h"
-#include <fstream>
-#include <sstream>
-
 void PushDownAutomaton::ReadAutomaton(std::istream& is) 
 {
+	reset();
 	std::string line;
 	while (std::getline(is, line)) {
 		std::istringstream iss(line);
@@ -117,7 +113,7 @@ void PushDownAutomaton::ReadAutomaton(std::istream& is)
 			char state;
 			while (iss >> word && word != "Alphabet:") {
 				if (word[0] == 'q') {
-					state = word[1] - '0'; // Presupunem că stările sunt de la q0 la q9
+					state = word[1] - '0';
 					QPoint defaultPosition(200 + 50 * int(state), 200);
 					AddState(defaultPosition);
 				}
@@ -130,32 +126,41 @@ void PushDownAutomaton::ReadAutomaton(std::istream& is)
 			}
 		}
 		else if (word == "Stack") {
-			iss >> word; // Skip "Alphabet:"
+			iss >> word;
 			char stackSymbol;
 			while (iss >> stackSymbol) {
 				m_PDMemoryAlphabet.insert(stackSymbol);
 			}
 		}
-		else if (word == "Transitions:") {
-			// Sariți peste linia cu "Transitions:"
-			continue;
-		}
-		else if (word == "Transitions:") {
+		else if (word == "Transitions:") 
+		{
 			std::string transitionLine;
 			while (std::getline(is, transitionLine) && transitionLine != "Start state:") {
 				std::istringstream transitionStream(transitionLine);
-				transitionStream >> word; // Citim [qX , a , Y]
+				transitionStream >> word;
 
-				if (word[0] == '[') {
-					char stateFrom = word[1] - '0';
-					char inputSymbol = word[5];
-					char stackTop = word[9];
+				if (word[0] == '[') 
+				{
+					char stateFrom = word[2] - '0';
 
-					transitionStream >> word; // Citim "->"
-					transitionStream >> word; // Citim [qZ , W]
-					char stateTo = word[1] - '0';
-					std::string stackPush = word.substr(5);
+					transitionStream >> word;
+					transitionStream >> word;
 
+					char inputSymbol = word[0];
+
+					transitionStream >> word;
+					transitionStream >> word;
+
+					char stackTop = word[0];
+
+					transitionStream >> word;
+					transitionStream >> word;
+					char stateTo = word[2] - '0';
+
+					transitionStream >> word;
+					transitionStream >> word;
+
+					std::string stackPush(word.begin(), word.end() - 1);
 					QString transitionValue = QString(inputSymbol);
 					QString stackHead = QString(stackTop);
 					QString nextStateStackHead = QString::fromStdString(stackPush);
@@ -164,14 +169,16 @@ void PushDownAutomaton::ReadAutomaton(std::istream& is)
 			}
 		}
 		else if (word == "Start") {
-			iss >> word; // Skip "state:"
 			iss >> word;
-			m_startState = word[1]; // Presupunem că starea de start este q0, q1, etc.
+			iss >> word;
+			m_startState = word[1];
+			SetState(StateType::start, int(word[1] - '0'));
 		}
 		else if (word == "Final") {
-			iss >> word; // Skip "states:"
+			iss >> word;
 			while (iss >> word) {
-				SetState(StateType::finish, word[1] - '0'); // Presupunem că stările finale sunt q0, q1, etc.
+				SetState(StateType::finish, int(word[1] - '0'));
+				m_finalStates.push_back(word[1] - '0');
 			}
 		}
 	}
@@ -229,7 +236,7 @@ void PushDownAutomaton::PrintAutomaton(std::ostream& out)
 	}
 
 	if (m_startState.has_value()) {
-		out << "Start state: q" << int(m_startState.value()) << "\n";
+		out << "Start state:\nq" << int(m_startState.value()) << "\n";
 	}
 
 	out << "Final states: ";

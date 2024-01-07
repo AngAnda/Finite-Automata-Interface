@@ -18,7 +18,7 @@ FiniteAutomaton::FiniteAutomaton(const std::vector<char>& Q, const std::vector<c
 	m_transitions(delta),
 	m_startState(q0),
 	m_finalStates(F),
-	m_lambda('*'),// de vazut partea cu lambda
+	m_lambda('*'),
 	m_statesUi({})
 {
 	// empty
@@ -74,7 +74,6 @@ void FiniteAutomaton::ReadAutomaton(std::istream& is) {
 	std::string startState;
 	std::string finalStates;
 
-	// Resetați automatul actual înainte de a citi unul nou
 	reset();
 
 	while (std::getline(is, line)) 
@@ -87,8 +86,7 @@ void FiniteAutomaton::ReadAutomaton(std::istream& is) {
 			while (iss >> word && word != "Alphabet:") {
 				if (word[0] == 'q') 
 				{
-					state = word[1] - '0'; // Presupunem că stările sunt de la q0 la q9
-					//m_states.push_back(state);
+					state = word[1] - '0';
 					QPoint defaultPosition(200 + 50 * int(state), 200);
 					AddState(defaultPosition);
 				}
@@ -99,17 +97,42 @@ void FiniteAutomaton::ReadAutomaton(std::istream& is) {
 				m_alphabet.push_back(input);
 			}
 		}
+		else if (word == "Transitions:") {
+			continue;
+		}
+		else if (word[0] == '[') {
+			state = word[2] - '0';
+			iss >> input;
+			iss >> input;
+			iss >> word;
+			iss >> word;
+			iss >> word;
+			targetState = word[1] - '0';
+			State* fromState = m_statesUi[int(state)];
+			State* toState = m_statesUi[int(targetState)];
+			QString transitionLabel = QString(input);
+			TransitionType transitionType = base;
+
+			if (input == '*')
+				transitionLabel = QString::fromUtf8("\xce\xbb");
+			if (int(state) == int(targetState))
+				transitionType = self_pointing;
+			else transitionType = base;
+			AddTransition(fromState, toState, transitionLabel, transitionType);
+		}
 		else if (word == "Start") {
-			iss >> word; // Ignorați "state:"
+			iss >> word;
 			iss >> startState;
-			m_startState = startState[1] - '0'; // Presupunem că stările sunt de la q0 la q9
+			m_startState = startState[1] - '0';
+			SetState(StateType::start, int(m_startState.value()));
 		}
 		else if (word == "Final") {
 			iss >> word; // Ignorați "states:"
 			while (iss >> word) {
-				finalStates.push_back(word[1] - '0'); // Presupunem că stările sunt de la q0 la q9
+				finalStates.push_back(word[1] - '0');
 			}
 			for (char fs : finalStates) {
+				SetState(StateType::finish, int(fs));
 				m_finalStates.push_back(fs);
 			}
 		}
