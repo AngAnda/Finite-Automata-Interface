@@ -26,6 +26,7 @@ namespace std {
 		}
 	};
 }
+
 using TransitionMap = std::unordered_map<std::tuple<char, char, char>, std::pair<char, std::string>>;
 
 
@@ -52,8 +53,6 @@ public:
 	void ReadAutomaton(std::istream& is) override;
 	friend std::ostream& operator<<(std::ostream& os, PushDownAutomaton& fa);
 
-	// Functiile specifice pentru interfata
-
 	void AddTransition(State* stateFrom, State* stateTo, QString value, char memoryFrom, std::string memoryTo, TransitionType transition);
 	virtual void AddState(QPoint p) override;
 	virtual void SetState(StateType state, int index) override;
@@ -62,7 +61,7 @@ public:
 
 	virtual std::vector<State*> GetStatesUi() override;
 	std::vector<PDTransition*> GetTransitionsUi();
-	std::vector<std::vector<std::pair<char, int>>> GetTransitionForWord(); // de vazut ce facem la apd
+	std::vector<std::vector<std::pair<char, int>>> GetTransitionForWord();
 	std::vector<std::vector<std::vector<char>>> GetStackForWord();
 
 	State* getStateByKey(int index);
@@ -71,8 +70,6 @@ public:
 	virtual bool CheckWord(const std::string& word);
 	void UpdateCoordinate(QPoint p, int index) override;
 	virtual void reset() override;
-
-	//set stack position
 
 	void setAlphabet(TransitionMap transitions);
 
@@ -89,21 +86,17 @@ private:
 	std::stack<char> m_PDMemory;
 	std::unordered_set<char> m_PDMemoryAlphabet;
 	std::vector<char> m_finalStates;
-	std::optional<char> m_startState; // de lucrat cu el putin
-	char m_startPDMemory ='Z';
+	std::optional<char> m_startState;
+	char m_startPDMemory = 'Z';
 	QPoint m_stackPosition;
 	TransitionMap m_transitions;
 	char m_lambda;
 
-	// pentru afisare
 	std::vector<PDTransition*> m_transitionsUi;
 	std::map<int, State*> m_statesUi;
 
-	std::unordered_map<int, std::vector<std::pair<char, int>>> m_transitionsAnimation; // pentru animatie de tranzitii
+	std::unordered_map<int, std::vector<std::pair<char, int>>> m_transitionsAnimation;
 	std::unordered_map<int, std::vector<std::stack<int>>> m_stackAnimation;
-	// stare 
-	// index cuvant
-	
 };
 
 std::ostream& operator<<(std::ostream& os, std::vector<char> vec);

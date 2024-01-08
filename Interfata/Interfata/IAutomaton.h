@@ -18,10 +18,6 @@ public:
 
 	virtual void DeleteState(int index) = 0;
 
-	//virtual std::vector<Transition*> GetTransitionsUi() = 0;
-
-	//virtual void AddTransition(State*, State*, QString, TransitionType) = 0;
-
 	virtual void UpdateCoordinate(QPoint, int) = 0;
 
 	virtual bool CheckWord(const std::string& word) = 0;

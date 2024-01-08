@@ -48,7 +48,7 @@ public:
 
 	void AddTransition(State*, State*, QString, TransitionType transition);
 
-	std::vector<std::vector<std::pair<char, int>>> GetTransitionForWord(); // de vazut ce facem la apd
+	std::vector<std::vector<std::pair<char, int>>> GetTransitionForWord(); 
 
 	State* getStateByKey(int index);
 	
@@ -64,13 +64,12 @@ private:
 	std::vector<char> m_alphabet;
 	std::vector<char> m_states; 
 	std::vector<char> m_finalStates; 
-	std::optional<char> m_startState; // de lucrat cu el putin
+	std::optional<char> m_startState; 
 	char m_lambda;
 
-	// pentru afisare
 	std::vector<Transition*> m_transitionsUi;
 	std::map<int, State*> m_statesUi;
-	std::vector<std::vector<std::pair<char, int>>> m_transitionsAnimation; // pentru animatie de tranzitii
+	std::vector<std::vector<std::pair<char, int>>> m_transitionsAnimation; 
 };
 
 std::ostream& operator<<(std::ostream& os, std::vector<char> vec);

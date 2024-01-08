@@ -30,24 +30,16 @@ bool PushDownAutomaton::CheckWordRecursive(std::string word, int index, char cur
 	}
 
 	char currentLetter = word[index];
-	//if (std::find(m_alphabet.begin(), m_alphabet.end(), currentLetter) == m_alphabet.end()) {
-	//	return false; 
-	//}
 
 	std::vector<std::pair<char, std::string>> transitions;
 	std::tuple<char, char, char> key = std::make_tuple(currentState, currentLetter, PDMemory.empty() ? '\0' : PDMemory.top());
 	if (m_transitions.find(key) != m_transitions.end())
 		transitions.emplace_back(m_transitions[key]);
 
-
-	//std::vector<std::pair<char, std::string>> transitions = { m_transitions[std::make_tuple(currentState, currentLetter, PDMemory.empty() ? '\0' : PDMemory.top())]};
-
 	for (const auto& transition : transitions) {
 
-		
-		m_transitionsAnimation[index].emplace_back(std::make_pair(transition.first, index)); // de verificat daca merge okay
-		//m_stackAnimation[index].emplace_back(transition.first.get(1));
-		//m_stackAnimation[index].emplace_back(transition.first. ); // se ia elementul 3 din stack
+
+		m_transitionsAnimation[index].emplace_back(std::make_pair(transition.first, index));
 
 		std::stack<char> newPDMemory = PDMemory;
 		if (!newPDMemory.empty()) newPDMemory.pop();
@@ -59,11 +51,11 @@ bool PushDownAutomaton::CheckWordRecursive(std::string word, int index, char cur
 		}
 
 		if (CheckWordRecursive(word, index + 1, transition.first, newPDMemory)) {
-			return true; // Dacă orice traseu duce la acceptare, returnăm true.
+			return true;
 		}
 	}
 
-	return false; // Niciun traseu nu a dus la acceptare.
+	return false;
 }
 
 
@@ -108,12 +100,11 @@ bool PushDownAutomaton::IsValid() const
 		return false;
 	}
 
-	// DE FACUT : de verificat daca toate starile sunt conectate prin cel putin o singura tranzitie
 
 	return true;
 }
 
-void PushDownAutomaton::ReadAutomaton(std::istream& is) 
+void PushDownAutomaton::ReadAutomaton(std::istream& is)
 {
 	reset();
 	std::string line;
@@ -145,14 +136,14 @@ void PushDownAutomaton::ReadAutomaton(std::istream& is)
 				m_PDMemoryAlphabet.insert(stackSymbol);
 			}
 		}
-		else if (word == "Transitions:") 
+		else if (word == "Transitions:")
 		{
 			std::string transitionLine;
 			while (std::getline(is, transitionLine) && transitionLine != "Start state:") {
 				std::istringstream transitionStream(transitionLine);
 				transitionStream >> word;
 
-				if (word[0] == '[') 
+				if (word[0] == '[')
 				{
 					char stateFrom = word[2] - '0';
 
@@ -266,7 +257,7 @@ void PushDownAutomaton::PrintAutomaton(std::ostream& out)
 }
 
 void PushDownAutomaton::DeleteState(int value)
-{	// ce se intampla cu simbolul de start
+{
 
 	m_transitionsUi.erase(std::remove_if(m_transitionsUi.begin(), m_transitionsUi.end(),
 		[value](Transition* transition) {
@@ -275,15 +266,12 @@ void PushDownAutomaton::DeleteState(int value)
 		m_transitionsUi.end()
 	);
 
-	m_statesUi.erase(m_statesUi.find(value)); // se sterge din states
-	// aici este problema
+	m_statesUi.erase(m_statesUi.find(value));
 	m_states.erase(std::find(m_states.begin(), m_states.end(), value));
 	if (std::find(m_finalStates.begin(), m_finalStates.end(), value) != m_finalStates.end())
 		m_finalStates.erase(std::find(m_finalStates.begin(), m_finalStates.end(), value));
 	if (m_startState == char(value) && !m_states.empty())
 		m_startState = m_states.front();
-
-	// ce se intampla cu m_startState? 
 }
 
 void PushDownAutomaton::UpdateCoordinate(QPoint p, int index)
@@ -343,10 +331,8 @@ std::vector<PDTransition*> PushDownAutomaton::GetTransitionsUi()
 
 std::vector<std::vector<std::pair<char, int>>> PushDownAutomaton::GetTransitionForWord()
 {
-
-	// ar trebui sa mearga
 	std::vector<std::vector<std::pair<char, int>>> transitions;
-	
+
 	for (const auto& step : m_transitionsAnimation) {
 		transitions.emplace_back(step.second);
 	}
@@ -379,26 +365,21 @@ void PushDownAutomaton::AddTransition(State* stateFrom, State* stateTo, QString 
 {
 	char transitionValue = (value == QString::fromUtf8("\xce\xbb")) ? m_lambda : value.at(0).toLatin1();
 
-	
-	//transform memoryFrom in QString
 	QString stackHead = QString::fromStdString(std::string(1, memoryFrom));
 	QString nextStateStackHead = QString::fromStdString(memoryTo);
-	
-	// adaugare tranzitie pentru ui 
+
 	for (auto& transition : m_transitionsUi) {
 		if (transition->existingTransition(stateFrom, stateTo)) {
-			transition->Update(value,stackHead, nextStateStackHead);
+			transition->Update(value, stackHead, nextStateStackHead);
 			m_transitions[{ char((stateFrom->GetIndex())), transitionValue, memoryFrom }] = { char(stateTo->GetIndex()), memoryTo };
 			return;
 		}
 	}
 	m_transitionsUi.emplace_back(new PDTransition({ stateFrom, stateTo, value, transition,stackHead, nextStateStackHead }));
 
-	// adaugare tranzitie 
 	auto it = m_transitions.find({ char((stateFrom->GetIndex())), transitionValue, memoryFrom });
 	if (it == m_transitions.end())
 		m_transitions[{char((stateFrom->GetIndex())), transitionValue, memoryFrom}] = { char(stateTo->GetIndex()), memoryTo };
-
 }
 
 
@@ -456,10 +437,6 @@ bool PushDownAutomaton::VerifyAutomaton()
 	for (auto& el : m_finalStates) {
 		if (std::find(m_states.begin(), m_states.end(), el) == m_states.end())
 			return false;
-	}
-
-	for (auto& el : m_transitions) {
-		// de facut poate
 	}
 
 	return true;

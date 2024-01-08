@@ -127,7 +127,7 @@ void FiniteAutomaton::ReadAutomaton(std::istream& is) {
 			SetState(StateType::start, int(m_startState.value()));
 		}
 		else if (word == "Final") {
-			iss >> word; // Ignorați "states:"
+			iss >> word; 
 			while (iss >> word) {
 				finalStates.push_back(word[1] - '0');
 			}
@@ -159,25 +159,17 @@ bool FiniteAutomaton::VerifyAutomaton()
 			return false;
 	}
 
-	for (auto& el : m_transitions) {
-		// de facut poate
-	}
-
 	return true;
 }
 
 bool FiniteAutomaton::CheckWord(const std::string& word)
 {
-	// se verifica daca automatul este sau nu valid
-
-	// va trebui folosit dynamic cast pe undeva pe aici
-
 	m_transitionsAnimation.clear();
 	if (word.size() == 0)
 		return (std::find(m_finalStates.begin(), m_finalStates.end(), m_startState) != m_finalStates.end());
 
 
-	std::vector<std::pair<char, int>> crtState = { { m_startState.value(), 0} }; // state and index
+	std::vector<std::pair<char, int>> crtState = { { m_startState.value(), 0} }; 
 	std::vector<std::pair<char, int>> toCheckState;
 	m_transitionsAnimation.emplace_back(crtState);
 
@@ -189,7 +181,7 @@ bool FiniteAutomaton::CheckWord(const std::string& word)
 				std::pair<char, char> key = { state, word[index] };
 
 
-				if (m_transitions.find(key) != m_transitions.end()) { // Check if the key exists in the map
+				if (m_transitions.find(key) != m_transitions.end()) { 
 					for (auto& transitionResult : m_transitions[key]) {
 						if (std::find(toCheckState.begin(), toCheckState.end(), std::make_pair(transitionResult, index)) == toCheckState.end()) {
 							toCheckState.emplace_back(transitionResult, index + 1);
@@ -202,7 +194,7 @@ bool FiniteAutomaton::CheckWord(const std::string& word)
 				}
 
 				key = { state, m_lambda };
-				if (m_transitions.find(key) != m_transitions.end()) { // Check if the key exists in the map
+				if (m_transitions.find(key) != m_transitions.end()) { 
 					for (auto& transitionResult : m_transitions[key]) {
 						if (std::find(toCheckState.begin(), toCheckState.end(), std::make_pair(transitionResult, index)) == toCheckState.end()) {
 							toCheckState.emplace_back(transitionResult, index);
@@ -251,8 +243,6 @@ void FiniteAutomaton::AddState(QPoint p)
 
 void FiniteAutomaton::DeleteState(int value)
 {
-	// ce se intampla cu simbolul de start
-
 	m_transitionsUi.erase(std::remove_if(m_transitionsUi.begin(), m_transitionsUi.end(),
 		[value](Transition* transition) {
 			return (transition->HasStateOfValue(value));
@@ -260,15 +250,12 @@ void FiniteAutomaton::DeleteState(int value)
 		m_transitionsUi.end()
 	);
 
-	m_statesUi.erase(m_statesUi.find(value)); // se sterge din states
-	// aici este problema
+	m_statesUi.erase(m_statesUi.find(value)); 
 	m_states.erase(std::find(m_states.begin(), m_states.end(), value));
 	if (std::find(m_finalStates.begin(), m_finalStates.end(), value) != m_finalStates.end())
 		m_finalStates.erase(std::find(m_finalStates.begin(), m_finalStates.end(), value));
 	if (m_startState == char(value) && !m_states.empty())
 		m_startState = m_states.front();
-
-	// ce se intampla cu m_startState? 
 }
 
 void FiniteAutomaton::UpdateCoordinate(QPoint p, int index)
@@ -329,7 +316,6 @@ std::vector<Transition*> FiniteAutomaton::GetTransitionsUi()
 
 void FiniteAutomaton::AddTransition(State* stateFrom, State* stateTo, QString value, TransitionType transition)
 {
-	// adaugare tranzitie pentru ui 
 	char transitionValue = (value == QString::fromUtf8("\xce\xbb")) ? m_lambda : value.at(0).toLatin1();
 
 	for (auto& transition : m_transitionsUi) {
@@ -340,8 +326,6 @@ void FiniteAutomaton::AddTransition(State* stateFrom, State* stateTo, QString va
 		}
 	}
 	m_transitionsUi.emplace_back(new Transition({ stateFrom, stateTo, value, transition }));
-
-	// adaugare tranzitie 
 
 	auto it = m_transitions.find({ char((stateFrom->GetIndex())), transitionValue });
 	if (it == m_transitions.end())
@@ -387,7 +371,6 @@ bool FiniteAutomaton::IsValid() const
 {
 	QMessageBox messageBox;
 	messageBox.setFixedSize(500, 200);
-	// de cautat probleme in continuare
 	if (m_startState == std::nullopt)
 	{
 		messageBox.critical(0, "Invalid automaton", "No start state !");
@@ -412,8 +395,6 @@ bool FiniteAutomaton::IsValid() const
 		messageBox.show();
 		return false;
 	}
-
-	// DE FACUT : de verificat daca toate starile sunt conectate prin cel putin o singura tranzitie
 
 	return true;
 }

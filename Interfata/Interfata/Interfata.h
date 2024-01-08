@@ -30,7 +30,7 @@ private slots:
 	void HandleStateManager4(bool checked);
 	void CheckOneWord();
 	void CheckWordsFromFile();
-	void OnComboBoxSelectionChanged(int index); // nu functioneaza
+	void OnComboBoxSelectionChanged(int index); 
 	void SaveAutomatonToFile();
 	void LoadAutomatonFromFile();
 
@@ -76,7 +76,6 @@ private:
 	size_t stackItemWidth;
 	size_t stackItemHeight;
 	size_t stackSize = 3;
-	// variabile globale, sunt cam urate
 	int m_AnimationStep;
 	QString m_currentWord;
 

@@ -115,14 +115,12 @@
     <QtUic Include="Interfata.ui" />
     <QtMoc Include="Interfata.h" />
     <ClCompile Include="FiniteAutomaton.cpp" />
-    <ClCompile Include="Grammar.cpp" />
     <ClCompile Include="Interfata.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="CheckWords.h" />
     <ClInclude Include="FiniteAutomaton.h" />
-    <ClInclude Include="Grammar.h" />
     <ClInclude Include="IAutomaton.h" />
     <ClInclude Include="PDTransition.h" />
     <ClInclude Include="PushDownAutomaton.h" />

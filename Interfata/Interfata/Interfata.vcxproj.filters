@@ -40,9 +40,6 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Grammar.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="FiniteAutomaton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -66,9 +63,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Grammar.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="IAutomaton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
