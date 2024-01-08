@@ -120,7 +120,7 @@ void Interfata::paintEvent(QPaintEvent* event)
 
 void Interfata::DrawStack(QPainter& painter)
 {
-	stackItemWidth = 30;
+	stackItemWidth = 30; 
 	stackItemHeight = 20; 
 
 	PushDownAutomaton* pda = dynamic_cast<PushDownAutomaton*>(m_automaton);
@@ -266,7 +266,7 @@ void Interfata::mouseMoveEvent(QMouseEvent* event)
 	}
 	else if (m_stateMoving.has_value()) {
 		m_automaton->UpdateCoordinate(event->pos(), m_stateMoving.value());
-		update();
+		update(); 
 	}
 }
 
@@ -357,7 +357,7 @@ void Interfata::CheckWordsFromFile()
 			in >> word; 
 
 			if (m_automaton->CheckWord(word.toStdString())) {
-				m_acceptedWordsWidget->AddAcceptedWords(word); 
+				m_acceptedWordsWidget->AddAcceptedWords(word);
 			}
 			else {
 				m_acceptedWordsWidget->AddRejectedWords(word); 
@@ -368,11 +368,7 @@ void Interfata::CheckWordsFromFile()
 
 		file.close();
 	}
-	else 
-	{
-		//am modificat
-		//QMessageBox::warning(this, "Path Error", "You did not select any file.");
-	}
+
 
 	m_acceptedWordsWidget->show();
 }
@@ -487,7 +483,7 @@ void Interfata::DrawArrow(QPainter& painter, const Transition* transition) {
 
 		QPointF midPoint = (startBorder + endBorder) / 2.0;
 
-		double textOffset = 10; 
+		double textOffset = 10;
 		QPointF perpOffset(-sin(angle) * textOffset, cos(angle) * textOffset);
 
 		midPoint += perpOffset;
@@ -497,7 +493,7 @@ void Interfata::DrawArrow(QPainter& painter, const Transition* transition) {
 		QRect textRect = metrics.boundingRect(label);
 		textRect.moveCenter(midPoint.toPoint());
 
-		QRect backgroundRect = textRect.adjusted(-5, -2, 5, 2); 
+		QRect backgroundRect = textRect.adjusted(-5, -2, 5, 2);
 		painter.setBrush(QColor(255, 255, 255, 127)); 
 		painter.setPen(Qt::NoPen); 
 		painter.drawRect(backgroundRect);
@@ -512,7 +508,7 @@ void Interfata::DrawArrow(QPainter& painter, const Transition* transition) {
 		QPoint newPoint(startCenter.x() - m_radius + m_radius / 8, startCenter.y() - m_radius + m_radius / 8);
 		painter.drawEllipse(QRect(newPoint, QSize(m_radius, m_radius)));
 		QFont font = painter.font();
-		font.setPointSize(10); 
+		font.setPointSize(10); // Set the font size
 		painter.setFont(font);
 		QFontMetricsF metrics(font);
 		QRectF textRect = metrics.boundingRect(label);
@@ -590,10 +586,10 @@ void Interfata::DrawArrowPDA(QPainter& painter, const PDTransition* transition)
 
 
 		QRect backgroundRect = textRect.adjusted(-5, -2, 5, 2);
-		QRect backgroundRect2 = stackFromRect.adjusted(-5, -2, 5, 2); 
-		QRect backgroundRect3 = stackToRect.adjusted(-5, -2, 5, 2); 
-		QRect backgroundRect4 = comaToRect.adjusted(-5, -2, 5, 2); 
-		QRect backgroundRect5 = pipeRect.adjusted(-5, -2, 5, 2); 
+		QRect backgroundRect2 = stackFromRect.adjusted(-5, -2, 5, 2);
+		QRect backgroundRect3 = stackToRect.adjusted(-5, -2, 5, 2);
+		QRect backgroundRect4 = comaToRect.adjusted(-5, -2, 5, 2);
+		QRect backgroundRect5 = pipeRect.adjusted(-5, -2, 5, 2);
 		painter.setBrush(QColor(255, 255, 255, 200)); 
 		painter.setPen(Qt::NoPen); 
 		painter.drawRect(backgroundRect);
@@ -616,7 +612,7 @@ void Interfata::DrawArrowPDA(QPainter& painter, const PDTransition* transition)
 		QPoint newPoint(startCenter.x() - m_radius + m_radius / 8, startCenter.y() - m_radius + m_radius / 8);
 		painter.drawEllipse(QRect(newPoint, QSize(m_radius, m_radius)));
 		QFont font = painter.font();
-		font.setPointSize(10);
+		font.setPointSize(10); 
 		painter.setFont(font);
 
 		QFontMetricsF metrics(font);

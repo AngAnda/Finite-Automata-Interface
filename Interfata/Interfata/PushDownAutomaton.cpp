@@ -36,10 +36,11 @@ bool PushDownAutomaton::CheckWordRecursive(std::string word, int index, char cur
 	if (m_transitions.find(key) != m_transitions.end())
 		transitions.emplace_back(m_transitions[key]);
 
+
 	for (const auto& transition : transitions) {
 
-
-		m_transitionsAnimation[index].emplace_back(std::make_pair(transition.first, index));
+		
+		m_transitionsAnimation[index].emplace_back(std::make_pair(transition.first, index)); 
 
 		std::stack<char> newPDMemory = PDMemory;
 		if (!newPDMemory.empty()) newPDMemory.pop();
@@ -51,11 +52,11 @@ bool PushDownAutomaton::CheckWordRecursive(std::string word, int index, char cur
 		}
 
 		if (CheckWordRecursive(word, index + 1, transition.first, newPDMemory)) {
-			return true;
+			return true; 
 		}
 	}
 
-	return false;
+	return false; 
 }
 
 
@@ -104,7 +105,7 @@ bool PushDownAutomaton::IsValid() const
 	return true;
 }
 
-void PushDownAutomaton::ReadAutomaton(std::istream& is)
+void PushDownAutomaton::ReadAutomaton(std::istream& is) 
 {
 	reset();
 	std::string line;
@@ -136,14 +137,14 @@ void PushDownAutomaton::ReadAutomaton(std::istream& is)
 				m_PDMemoryAlphabet.insert(stackSymbol);
 			}
 		}
-		else if (word == "Transitions:")
+		else if (word == "Transitions:") 
 		{
 			std::string transitionLine;
 			while (std::getline(is, transitionLine) && transitionLine != "Start state:") {
 				std::istringstream transitionStream(transitionLine);
 				transitionStream >> word;
 
-				if (word[0] == '[')
+				if (word[0] == '[') 
 				{
 					char stateFrom = word[2] - '0';
 
@@ -256,8 +257,7 @@ void PushDownAutomaton::PrintAutomaton(std::ostream& out)
 	out.flush();
 }
 
-void PushDownAutomaton::DeleteState(int value)
-{
+void PushDownAutomaton::DeleteState(int value){
 
 	m_transitionsUi.erase(std::remove_if(m_transitionsUi.begin(), m_transitionsUi.end(),
 		[value](Transition* transition) {
@@ -266,12 +266,13 @@ void PushDownAutomaton::DeleteState(int value)
 		m_transitionsUi.end()
 	);
 
-	m_statesUi.erase(m_statesUi.find(value));
+	m_statesUi.erase(m_statesUi.find(value)); 
 	m_states.erase(std::find(m_states.begin(), m_states.end(), value));
 	if (std::find(m_finalStates.begin(), m_finalStates.end(), value) != m_finalStates.end())
 		m_finalStates.erase(std::find(m_finalStates.begin(), m_finalStates.end(), value));
 	if (m_startState == char(value) && !m_states.empty())
 		m_startState = m_states.front();
+
 }
 
 void PushDownAutomaton::UpdateCoordinate(QPoint p, int index)
@@ -331,8 +332,9 @@ std::vector<PDTransition*> PushDownAutomaton::GetTransitionsUi()
 
 std::vector<std::vector<std::pair<char, int>>> PushDownAutomaton::GetTransitionForWord()
 {
-	std::vector<std::vector<std::pair<char, int>>> transitions;
 
+	std::vector<std::vector<std::pair<char, int>>> transitions;
+	
 	for (const auto& step : m_transitionsAnimation) {
 		transitions.emplace_back(step.second);
 	}
@@ -365,12 +367,13 @@ void PushDownAutomaton::AddTransition(State* stateFrom, State* stateTo, QString 
 {
 	char transitionValue = (value == QString::fromUtf8("\xce\xbb")) ? m_lambda : value.at(0).toLatin1();
 
+	
 	QString stackHead = QString::fromStdString(std::string(1, memoryFrom));
 	QString nextStateStackHead = QString::fromStdString(memoryTo);
-
+	
 	for (auto& transition : m_transitionsUi) {
 		if (transition->existingTransition(stateFrom, stateTo)) {
-			transition->Update(value, stackHead, nextStateStackHead);
+			transition->Update(value,stackHead, nextStateStackHead);
 			m_transitions[{ char((stateFrom->GetIndex())), transitionValue, memoryFrom }] = { char(stateTo->GetIndex()), memoryTo };
 			return;
 		}
@@ -380,6 +383,7 @@ void PushDownAutomaton::AddTransition(State* stateFrom, State* stateTo, QString 
 	auto it = m_transitions.find({ char((stateFrom->GetIndex())), transitionValue, memoryFrom });
 	if (it == m_transitions.end())
 		m_transitions[{char((stateFrom->GetIndex())), transitionValue, memoryFrom}] = { char(stateTo->GetIndex()), memoryTo };
+
 }
 
 

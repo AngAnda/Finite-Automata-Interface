@@ -32,8 +32,6 @@ public:
 
 	std::string GetLambda() const override;
 
-	// Functiile specifice pentru interfata
-
 	virtual void AddState(QPoint p) override;
 
 	void DeleteState(int value) override;
@@ -48,7 +46,7 @@ public:
 
 	void AddTransition(State*, State*, QString, TransitionType transition);
 
-	std::vector<std::vector<std::pair<char, int>>> GetTransitionForWord(); 
+	std::vector<std::vector<std::pair<char, int>>> GetTransitionForWord();
 
 	State* getStateByKey(int index);
 	
@@ -69,7 +67,7 @@ private:
 
 	std::vector<Transition*> m_transitionsUi;
 	std::map<int, State*> m_statesUi;
-	std::vector<std::vector<std::pair<char, int>>> m_transitionsAnimation; 
+	std::vector<std::vector<std::pair<char, int>>> m_transitionsAnimation;
 };
 
 std::ostream& operator<<(std::ostream& os, std::vector<char> vec);

@@ -159,6 +159,7 @@ bool FiniteAutomaton::VerifyAutomaton()
 			return false;
 	}
 
+	
 	return true;
 }
 
@@ -169,11 +170,13 @@ bool FiniteAutomaton::CheckWord(const std::string& word)
 		return (std::find(m_finalStates.begin(), m_finalStates.end(), m_startState) != m_finalStates.end());
 
 
-	std::vector<std::pair<char, int>> crtState = { { m_startState.value(), 0} }; 
+	std::vector<std::pair<char, int>> crtState = { { m_startState.value(), 0} };
 	std::vector<std::pair<char, int>> toCheckState;
 	m_transitionsAnimation.emplace_back(crtState);
 
-	while (!crtState.empty()) {
+	bool found = false;
+
+	while (!crtState.empty() && !found) {
 		toCheckState.clear();
 		for (auto& crt : crtState) {
 			auto& [state, index] = crt;
@@ -181,13 +184,14 @@ bool FiniteAutomaton::CheckWord(const std::string& word)
 				std::pair<char, char> key = { state, word[index] };
 
 
-				if (m_transitions.find(key) != m_transitions.end()) { 
+				if (m_transitions.find(key) != m_transitions.end()) {
 					for (auto& transitionResult : m_transitions[key]) {
 						if (std::find(toCheckState.begin(), toCheckState.end(), std::make_pair(transitionResult, index)) == toCheckState.end()) {
-							toCheckState.emplace_back(transitionResult, index + 1);
+							toCheckState.emplace_back(transitionResult, index + 1 );
 							if (std::find(m_finalStates.begin(), m_finalStates.end(), transitionResult) != m_finalStates.end() && word.size() - 1 == index) {
 								m_transitionsAnimation.push_back(toCheckState);
-								return true;
+								found = true;
+								//return true;
 							}
 						}
 					}
@@ -200,7 +204,8 @@ bool FiniteAutomaton::CheckWord(const std::string& word)
 							toCheckState.emplace_back(transitionResult, index);
 							if (std::find(m_finalStates.begin(), m_finalStates.end(), transitionResult) != m_finalStates.end() && word.size() - 1 == index) {
 								m_transitionsAnimation.push_back(toCheckState);
-								return true;
+								found = true;
+								//return true;
 							}
 						}
 					}
@@ -208,6 +213,9 @@ bool FiniteAutomaton::CheckWord(const std::string& word)
 
 			}
 		}
+
+		if (found)
+			return true;
 
 		if (toCheckState.empty())
 			return false;
@@ -256,6 +264,7 @@ void FiniteAutomaton::DeleteState(int value)
 		m_finalStates.erase(std::find(m_finalStates.begin(), m_finalStates.end(), value));
 	if (m_startState == char(value) && !m_states.empty())
 		m_startState = m_states.front();
+
 }
 
 void FiniteAutomaton::UpdateCoordinate(QPoint p, int index)
@@ -316,6 +325,7 @@ std::vector<Transition*> FiniteAutomaton::GetTransitionsUi()
 
 void FiniteAutomaton::AddTransition(State* stateFrom, State* stateTo, QString value, TransitionType transition)
 {
+
 	char transitionValue = (value == QString::fromUtf8("\xce\xbb")) ? m_lambda : value.at(0).toLatin1();
 
 	for (auto& transition : m_transitionsUi) {
@@ -329,8 +339,10 @@ void FiniteAutomaton::AddTransition(State* stateFrom, State* stateTo, QString va
 
 	auto it = m_transitions.find({ char((stateFrom->GetIndex())), transitionValue });
 	if (it == m_transitions.end())
-		m_transitions[{ char((stateFrom->GetIndex())), transitionValue }].emplace_back(char(stateTo->GetIndex()));
-
+		m_transitions[{ char((stateFrom->GetIndex())), transitionValue }].push_back(char(stateTo->GetIndex()));
+	else
+		//it->second.emplace_back(char(stateTo->GetIndex()));
+		it->second.emplace_back(char(stateTo->GetIndex()));
 }
 
 std::vector<std::vector<std::pair<char, int>>> FiniteAutomaton::GetTransitionForWord()

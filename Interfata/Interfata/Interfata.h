@@ -30,7 +30,7 @@ private slots:
 	void HandleStateManager4(bool checked);
 	void CheckOneWord();
 	void CheckWordsFromFile();
-	void OnComboBoxSelectionChanged(int index); 
+	void OnComboBoxSelectionChanged(int index);
 	void SaveAutomatonToFile();
 	void LoadAutomatonFromFile();
 

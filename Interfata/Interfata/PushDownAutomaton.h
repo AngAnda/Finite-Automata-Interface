@@ -26,7 +26,6 @@ namespace std {
 		}
 	};
 }
-
 using TransitionMap = std::unordered_map<std::tuple<char, char, char>, std::pair<char, std::string>>;
 
 
@@ -61,7 +60,7 @@ public:
 
 	virtual std::vector<State*> GetStatesUi() override;
 	std::vector<PDTransition*> GetTransitionsUi();
-	std::vector<std::vector<std::pair<char, int>>> GetTransitionForWord();
+	std::vector<std::vector<std::pair<char, int>>> GetTransitionForWord(); 
 	std::vector<std::vector<std::vector<char>>> GetStackForWord();
 
 	State* getStateByKey(int index);
@@ -86,8 +85,8 @@ private:
 	std::stack<char> m_PDMemory;
 	std::unordered_set<char> m_PDMemoryAlphabet;
 	std::vector<char> m_finalStates;
-	std::optional<char> m_startState;
-	char m_startPDMemory = 'Z';
+	std::optional<char> m_startState; 
+	char m_startPDMemory ='Z';
 	QPoint m_stackPosition;
 	TransitionMap m_transitions;
 	char m_lambda;
@@ -95,8 +94,9 @@ private:
 	std::vector<PDTransition*> m_transitionsUi;
 	std::map<int, State*> m_statesUi;
 
-	std::unordered_map<int, std::vector<std::pair<char, int>>> m_transitionsAnimation;
+	std::unordered_map<int, std::vector<std::pair<char, int>>> m_transitionsAnimation; 
 	std::unordered_map<int, std::vector<std::stack<int>>> m_stackAnimation;
+
 };
 
 std::ostream& operator<<(std::ostream& os, std::vector<char> vec);
