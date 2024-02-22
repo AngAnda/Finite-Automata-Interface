@@ -1,4 +1,5 @@
-# Finite Automata Simulator
+# Finite Automata Interface
+
 This tool is a graphical application designed for the creation, simulation, and analysis of finite automata, which are key concepts in the fields of computer science and discrete mathematics. It provides an interactive way to visualize and understand the workings of automata.
 
 ## Features
