@@ -6,7 +6,7 @@ This tool is a graphical application designed for the creation, simulation, and 
 - **Add State**: Introduce new states into the automaton.
 - **Select Final State:** Mark states as final (acceptance) states, visually indicated by a double circle.
 - **Select Starting State:** Designate the initial state of the automaton, indicated by an entering arrow with no originating state.
-= **Delete State:** Remove states from the automaton.
+- **Delete State:** Remove states from the automaton.
 ![image](https://github.com/AngAnda/Interface-of-Finite-Automaton/assets/61116472/c0b9e39b-3218-4a69-aea1-963e9657d165)
 
 
